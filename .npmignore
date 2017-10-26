@@ -1,0 +1,11 @@
+# source files
+
+src/
+scripts/
+
+# any coffee files left lying around
+
+*.coffee
+
+# secrets
+identity.json

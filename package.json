@@ -1,0 +1,35 @@
+{
+  "name": "ikea-tradfri",
+  "version": "1.0.0",
+  "description": "A library to access the Ikea Trådfri lighting system without needing to call a separate binary",
+  "main": "lib/tradfri.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "coffee -c -o lib src",
+    "wait": "coffee -c -o lib -w src &",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CliffS/ikea-tradfri.git"
+  },
+  "keywords": [
+    "ikea",
+    "tradfri",
+    "coap",
+    "zigbee"
+  ],
+  "author": "Cliff Stanford <cliff@may.be>",
+  "license": "LGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/CliffS/ikea-tradfri/issues"
+  },
+  "homepage": "https://github.com/CliffS/ikea-tradfri#readme",
+  "dependencies": {
+    "node-coap-client": "^0.4.8"
+  },
+  "devDependencies": {
+    "coffeescript": "^2.0.1",
+    "node-tradfri": "^0.1.7"
+  }
+}

@@ -57,3 +57,11 @@ typings/
 # dotenv environment variables file
 .env
 
+# vim
+.*.sw?
+
+# compiled output
+lib/
+
+# secrets
+identity.json
