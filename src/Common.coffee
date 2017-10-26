@@ -2,7 +2,7 @@ Property = require './Property'
 
 class Common extends Property
 
-  constructor: (@raw) ->
+  constructor: (@raw, @coap) ->
     super()
 
   @property 'id',
@@ -22,6 +22,9 @@ class Common extends Property
     obj.brightness  = @brightness if @brightness?
     obj.devices     = @devices if @devices?
     obj
+
+  valueOf: ->
+    @id
 
   toString: ->
     JSON.stringify @toObject(), null, 2

@@ -13,6 +13,17 @@ class Device extends Common
       ison = @raw[3311]?[0][5850]
       ison is 1 if ison?
 
+  switch: (onoff) ->
+    value = if onoff then 1 else 0
+    job =
+      '3311': [
+        '5850' : value
+      ]
+    @coap.updateDevice @id, job
+    .then =>
+      @raw[3311]?[0][5850] = value
+      @
+
   @property 'colour',
     get: -> @raw[3311]?[0][5706]
 

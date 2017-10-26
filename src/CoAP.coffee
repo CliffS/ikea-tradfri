@@ -37,6 +37,16 @@ class CoAP extends Property
     .then (result) ->
       JSON.parse result.payload.toString()
 
+  PUT: (url, payload) ->
+    buffer = Buffer.from JSON.stringify payload
+    Coap.request url, 'put', buffer,
+      keepAlive: false
+      confirmable: false
+      observe: false
+    .then (result) ->
+      throw new Error "Result: #{result.code}" unless result.code.major is 2
+      result
+
   reset: ->
     Coap.reset @hub
 
@@ -48,7 +58,12 @@ class CoAP extends Property
     url.pathname += '/' + id
     @GET url
     .then (raw) =>
-      new Device raw
+      new Device raw, @
+
+  updateDevice: (id, payload) ->
+    url = @deviceURL
+    url.pathname += '/' + id
+    @PUT url, payload
 
   groups: ->
     @GET @groupURL
@@ -59,5 +74,10 @@ class CoAP extends Property
     @GET url
     .then (raw) =>
       new Group raw, @
+
+  updateGroup: (id, payload) ->
+    url = @groupURL
+    url.pathname += '/' + id
+    @PUT url, payload
 
 module.exports = CoAP

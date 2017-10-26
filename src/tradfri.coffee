@@ -50,7 +50,6 @@ test.getGroupIds()
 .then (group) ->
   console.log group
   console.log group.toObject()
-###
 test.getGroups()
 .then (groups) ->
   console.log (group.toObject() for group in groups)
@@ -60,4 +59,15 @@ test.getGroups()
   test.reset()
 .catch (err) ->
   console.log err.toString()
+  test.reset()
+###
+test.getDevice 65548
+.then (device) ->
+  console.log device.toString()
+  device.switch on
+.then (device) ->
+  console.log device.toObject()
+  test.reset()
+.catch (err) ->
+  console.log err
   test.reset()

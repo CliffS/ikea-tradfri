@@ -3,9 +3,6 @@ CoAP   = require './CoAP'
 
 class Group extends Common
 
-  constructor: (raw, @coap) ->
-    super raw
-
   @property 'on',
     get: ->
       @raw[5850] is 1
