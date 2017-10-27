@@ -30,19 +30,20 @@ class CoAP extends Property
       url
 
   GET: (url) ->          # Returns a promise
-    Coap.request url, 'get'
-      # keepAlive: false
-      # confirmable: false
-      # observe: false
+    Coap.request url, 'get',
+      keepAlive: true
+      confirmable: false
+      observe: false
+      retransmit: false
     .then (result) ->
       JSON.parse result.payload.toString()
 
   PUT: (url, payload) ->
     buffer = Buffer.from JSON.stringify payload
-    Coap.request url, 'put', buffer
-      # keepAlive: false
-      # confirmable: false
-      # observe: false
+    Coap.request url, 'put', buffer,
+      keepAlive: true
+      confirmable: true
+      observe: false
     .then (result) ->
       throw new Error "Result: #{result.code}" unless result.code.major is 2
       result
