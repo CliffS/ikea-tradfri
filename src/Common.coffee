@@ -4,6 +4,17 @@ class Common extends Property
 
   constructor: (@raw, @coap) ->
     super()
+    if @coap
+      @on 'newListener', (event) =>
+        @startPoll() unless @polling? or event isnt 'changed'
+      @on 'removeListener', =>
+        @stopPoll() if @listenerCount('changed') is 0
+
+  polling: null
+
+  stopPoll: ->
+    clearInterval @polling
+    @polling = null
 
   @property 'id',
     get: -> @raw[9003]
@@ -17,7 +28,7 @@ class Common extends Property
       name:         @name
     obj.type        = @type if @type
     obj.manufacturer= @manufacturer if @manufacturer
-    obj.on          = @on if @on?
+    obj.ison        = @ison if @ison?
     obj.colour      = @colour if @colour?
     obj.brightness  = @brightness if @brightness?
     obj.devices     = @devices if @devices?

@@ -1,6 +1,27 @@
 Common = require './Common'
+EventEmitter = require 'events'
+IsEqual = require 'deep-equal'
+
+INTERVAL = 1000 / 5     # 5 times a second
 
 class Device extends Common
+
+  startPoll: ->
+    console.log "Starting device poll: #{@id}"
+    @polling = setInterval =>
+      @coap.deviceRaw @id
+      .then (raw) =>
+        unless IsEqual @raw, raw
+          dev = new Device raw
+          changed = id: @id
+          changed.ison = [@ison, dev.ison] if dev.ison isnt @ison
+          changed.colour = [@colour, dev.colour] if dev.colour isnt @colour
+          changed.brightness = [@brightness, dev.brightness] if dev.brightness isnt @brightness
+          @raw = raw
+          @emit 'changed', changed
+      .catch (err) =>
+        console.log "ERROR in #{@id}", err.toString()
+    , INTERVAL
 
   @property 'type',
     get: -> @raw[3][1]
@@ -8,7 +29,7 @@ class Device extends Common
   @property 'manufacturer',
     get: -> @raw[3][0]
 
-  @property 'on',
+  @property 'ison',
     get: ->
       ison = @raw[3311]?[0][5850]
       ison is 1 if ison?

@@ -1,9 +1,25 @@
 Common = require './Common'
 CoAP   = require './CoAP'
+IsEqual = require 'deep-equal'
+
+INTERVAL = 1000 / 5     # 5 times a second
 
 class Group extends Common
 
-  @property 'on',
+  startPoll: ->
+    console.log "Starting group poll: #{@id}"
+    @polling = setInterval =>
+      @coap.groupRaw @id
+      .then (raw) =>
+        unless IsEqual @raw, raw
+          @emit 'changed',
+            ison: [@ison, raw[5850] is 1]
+          @raw = raw
+      .catch (err) =>
+        console.log "ERROR in #{@id}", err.toString()
+    , INTERVAL
+
+  @property 'ison',
     get: ->
       @raw[5850] is 1
 

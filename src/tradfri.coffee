@@ -1,6 +1,7 @@
 DNS = require 'dns'
 util = require 'util'
 CoAP = require './CoAP'
+sizeof = require('sizeof').sizeof
 
 class Tradfri
 
@@ -50,24 +51,22 @@ test.getGroupIds()
 .then (group) ->
   console.log group
   console.log group.toObject()
+###
 test.getGroups()
 .then (groups) ->
   console.log (group.toObject() for group in groups)
-  groups[0].getDevices()
+  for group in groups
+    do (group) =>
+      group.on 'changed', (what) ->
+        console.log 'GROUP CHANGED', @name, what
+  groups[1].getDevices()
 .then (devices) ->
-  console.log (device.toObject() for device in devices)
-  test.reset()
-.catch (err) ->
-  console.log err.toString()
-  test.reset()
-###
-test.getDevice 65548
-.then (device) ->
-  console.log device.toString()
-  device.switch on
-.then (device) ->
-  console.log device.toObject()
-  test.reset()
+  dowhat = (what) ->
+    console.log 'CHANGED:', @name, what
+  for device in devices
+    do (device) ->
+      device.on 'changed', dowhat
+  # console.log (device.toObject() for device in devices)
 .catch (err) ->
   console.log err
   test.reset()
