@@ -2,7 +2,7 @@ Common = require './Common'
 EventEmitter = require 'events'
 IsEqual = require 'deep-equal'
 
-INTERVAL = 1000 / 2     # 5 times a second
+INTERVAL = 1000 / 5     # 5 times a second
 
 class Device extends Common
 
@@ -14,13 +14,12 @@ class Device extends Common
         unless IsEqual @raw, raw
           dev = new Device raw
           changed = id: @id
-          changed.ison = [@ison, dev.ison] if dev.ison isnt @ison
-          changed.colour = [@colour, dev.colour] if dev.colour isnt @colour
-          changed.brightness = [@brightness, dev.brightness] if dev.brightness isnt @brightness
+          for prop in @props[1..]
+            changed[prop] = [@[prop], dev[prop]] if @[prop] isnt dev[prop]
           @raw = raw
           @emit 'changed', changed
       .catch (err) =>
-        console.log "ERROR in #{@id}", err.toString()
+        console.log "ERROR in #{@id}: #{@name}", err.toString()
     , INTERVAL
 
   @property 'type',

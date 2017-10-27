@@ -22,20 +22,25 @@ class Common extends Property
   @property 'name',
     get: -> @raw[9001]
 
-  toObject: ->
-    obj =
-      id:           @id
-      name:         @name
-    obj.type        = @type if @type
-    obj.manufacturer= @manufacturer if @manufacturer
-    obj.ison        = @ison if @ison?
-    obj.colour      = @colour if @colour?
-    obj.brightness  = @brightness if @brightness?
-    obj.devices     = @devices if @devices?
-    obj
+  @props = [
+      'id'
+      'name'
+      'type'
+      'manufacturer'
+      'ison'
+      'colour'
+      'brightness'
+      'devices'
+    ]
 
-  valueOf: ->
-    @id
+  @property 'props',
+    get: -> @constructor.props
+
+  toObject: ->
+    obj = {}
+    for prop in @props
+      obj[prop] = @[prop] if @[prop]?
+    obj
 
   toString: ->
     JSON.stringify @toObject(), null, 2

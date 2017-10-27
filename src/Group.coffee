@@ -2,7 +2,7 @@ Common = require './Common'
 CoAP   = require './CoAP'
 IsEqual = require 'deep-equal'
 
-INTERVAL = 1000 / 2     # 5 times a second
+INTERVAL = 1000 / 5     # 5 times a second
 
 class Group extends Common
 
@@ -12,11 +12,14 @@ class Group extends Common
       @coap.groupRaw @id
       .then (raw) =>
         unless IsEqual @raw, raw
-          @emit 'changed',
-            ison: [@ison, raw[5850] is 1]
+          grp = new Group raw
+          changed = id: @id
+          for prop in @props[1..]
+            changed[prop] = [@[prop], grp[prop]] if @[prop] isnt grp[prop]
           @raw = raw
+          @emit 'changed', changed
       .catch (err) =>
-        console.log "ERROR in #{@id}", err.toString()
+        console.log "ERROR in #{@id}: #{@name}", err.toString()
     , INTERVAL
 
   @property 'ison',
