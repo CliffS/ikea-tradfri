@@ -2,7 +2,7 @@ Common = require './Common'
 CoAP   = require './CoAP'
 IsEqual = require 'deep-equal'
 
-INTERVAL = 1000 / 5     # 5 times a second
+INTERVAL = 1000 / 2     # 5 times a second
 
 class Group extends Common
 
