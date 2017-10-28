@@ -1,6 +1,7 @@
+EventEmitter = require 'events'
 Property = require './Property'
 
-class Common extends Property
+class Common extends EventEmitter
 
   constructor: (@raw, @coap) ->
     super()

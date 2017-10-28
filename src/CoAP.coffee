@@ -8,10 +8,9 @@ Group    = require './Group'
 DEVICE = '15001'
 GROUP  = '15004'
 
-class CoAP extends Property
+class CoAP
 
   constructor: (@hub, securityId) ->
-    super()
     Coap.setSecurityParams @hub,
       psk:
         Client_identity: securityId
