@@ -1,5 +1,6 @@
 Coap = require('node-coap-client').CoapClient
 { URL } = require 'url'
+Throttler = require 'p-throttler'
 
 Property = require './Property'
 Device   = require './Device'
@@ -15,6 +16,11 @@ class CoAP
       psk:
         Client_identity: securityId
     @url = new URL "coaps://#{@hub}:5684"
+    @throttler = Throttler.create 10,
+      coap: 1
+    setInterval =>
+      console.log "queue: #{@queue}"
+    , 5000
 
   @property 'deviceURL',
     get: ->
@@ -28,27 +34,37 @@ class CoAP
       url.pathname = GROUP
       url
 
+  @property 'queue',
+    get: ->
+      @throttler._queue.coap.length
+
   GET: (url) ->          # Returns a promise
-    Coap.request url, 'get',
-      keepAlive: true
-      confirmable: false
-      observe: false
-      retransmit: false
+    @throttler.enqueue =>
+      Coap.request url, 'get',
+        keepAlive: true
+        confirmable: false
+        observe: false
+        retransmit: false
+    , 'coap'
     .then (result) ->
       JSON.parse result.payload.toString()
 
   PUT: (url, payload) ->
     buffer = Buffer.from JSON.stringify payload
-    Coap.request url, 'put', buffer,
-      keepAlive: true
-      confirmable: true
-      observe: false
+    @throttler.enqueue =>
+      Coap.request url, 'put', buffer,
+        keepAlive: true
+        confirmable: true
+        observe: false
+    , 'coap'
     .then (result) ->
       throw new Error "Result: #{result.code}" unless result.code.major is 2
       result
 
   reset: ->
-    Coap.reset @hub
+    @throttler.abort()
+    .then =>
+      Coap.reset @hub
 
   devices: ->
     @GET @deviceURL
@@ -58,7 +74,8 @@ class CoAP
     .then (raw) =>
       new Device raw, @
 
-  deviceRaw: (id) ->
+  deviceRaw: (id, disposable) ->
+    return Promise.resolve() if disposable and @queue > 1
     url = @deviceURL
     url.pathname += '/' + id
     @GET url
@@ -76,7 +93,8 @@ class CoAP
     .then (raw) =>
       new Group raw, @
 
-  groupRaw: (id) ->
+  groupRaw: (id, disposable) ->
+    return Promise.resolve() if disposable and @queue > 1
     url = @groupURL
     url.pathname += '/' + id
     @GET url

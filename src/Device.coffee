@@ -7,10 +7,11 @@ INTERVAL = 1000 / 5     # 5 times a second
 class Device extends Common
 
   startPoll: ->
-    console.log "Starting device poll: #{@id}"
+    console.log "Starting device poll: #{@id}: #{@name}"
     @polling = setInterval =>
-      @coap.deviceRaw @id
+      @coap.deviceRaw @id, true
       .then (raw) =>
+        return unless raw?
         unless IsEqual @raw, raw
           dev = new Device raw
           changed = id: @id

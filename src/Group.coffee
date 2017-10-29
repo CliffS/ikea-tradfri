@@ -9,8 +9,9 @@ class Group extends Common
   startPoll: ->
     console.log "Starting group poll: #{@id}"
     @polling = setInterval =>
-      @coap.groupRaw @id
+      @coap.groupRaw @id, true
       .then (raw) =>
+        return unless raw?
         unless IsEqual @raw, raw
           grp = new Group raw
           changed = id: @id

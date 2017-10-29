@@ -28,6 +28,7 @@
   "dependencies": {
     "deep-equal": "^1.0.1",
     "node-coap-client": "^0.4.8",
+    "p-throttler": "^1.0.2",
     "sizeof": "^1.0.0"
   },
   "devDependencies": {
