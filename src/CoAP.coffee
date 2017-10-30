@@ -1,6 +1,5 @@
 Coap = require('node-coap-client').CoapClient
 { URL } = require 'url'
-Throttler = require 'p-throttler'
 
 Property = require './Property'
 Device   = require './Device'
@@ -16,11 +15,11 @@ class CoAP
       psk:
         Client_identity: securityId
     @url = new URL "coaps://#{@hub}:5684"
-    @throttler = Throttler.create 10,
-      coap: 1
-    setInterval =>
-      console.log "queue: #{@queue}"
-    , 5000
+    Coap.tryToConnect @url
+    .then (connected) =>
+      console.log "Connected", connected
+    .catch (err) =>
+      throw err
 
   @property 'deviceURL',
     get: ->
@@ -34,37 +33,21 @@ class CoAP
       url.pathname = GROUP
       url
 
-  @property 'queue',
-    get: ->
-      @throttler._queue.coap.length
-
   GET: (url) ->          # Returns a promise
-    @throttler.enqueue =>
-      Coap.request url, 'get',
-        keepAlive: true
-        confirmable: false
-        observe: false
-        retransmit: false
-    , 'coap'
+    Coap.request url, 'get'
     .then (result) ->
       JSON.parse result.payload.toString()
 
   PUT: (url, payload) ->
     buffer = Buffer.from JSON.stringify payload
-    @throttler.enqueue =>
-      Coap.request url, 'put', buffer,
-        keepAlive: true
-        confirmable: true
-        observe: false
-    , 'coap'
+    Coap.request url, 'put', buffer
     .then (result) ->
       throw new Error "Result: #{result.code}" unless result.code.major is 2
       result
 
+
   reset: ->
-    @throttler.abort()
-    .then =>
-      Coap.reset @hub
+    Coap.reset @hub
 
   devices: ->
     @GET @deviceURL
@@ -79,6 +62,23 @@ class CoAP
     url = @deviceURL
     url.pathname += '/' + id
     @GET url
+
+  observed = new Set
+  deviceObserve: (id, callback) ->
+    url = @deviceURL
+    url.pathname += '/' + id
+    observed.add url
+    Coap.observe url, 'get', callback
+
+  unObserve: (id) ->
+    url = @deviceURL
+    url.pathname += '/' + id
+    Coap.stopObserving url
+
+  process.on 'exit', =>
+    console.log 'Cleaning up...'
+    # Coap.stopObserving url for url from observed
+    Coap.reset()
 
   updateDevice: (id, payload) ->
     url = @deviceURL
@@ -105,3 +105,12 @@ class CoAP
     @PUT url, payload
 
 module.exports = CoAP
+
+process.on 'SIGINT', ->
+  process.exit()
+process.on 'SIGTERM', ->
+  process.exit()
+process.on 'uncaughtException', (err) =>
+  console.log 'Cleaning up for exception'
+  Coap.reset()
+  throw err

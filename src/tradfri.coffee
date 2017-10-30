@@ -55,18 +55,21 @@ test.getGroupIds()
 test.getGroups()
 .then (groups) ->
   console.log (group.toObject() for group in groups)
+  ###
   for group in groups
     do (group) =>
       group.on 'changed', (what) ->
         console.log 'GROUP CHANGED', @name, what
+  ###
   groups[1].getDevices()
 .then (devices) ->
   dowhat = (what) ->
-    console.log 'CHANGED:', @name, what
+    console.log 'CHANGED:', @name, util.inspect what, depth: null
   for device in devices
     do (device) ->
+      console.log device.toString()
       device.on 'changed', dowhat
   # console.log (device.toObject() for device in devices)
 .catch (err) ->
-  console.log err
+  console.log 'Caught', err
   test.reset()

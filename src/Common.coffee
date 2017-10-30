@@ -5,17 +5,6 @@ class Common extends EventEmitter
 
   constructor: (@raw, @coap) ->
     super()
-    if @coap
-      @on 'newListener', (event) =>
-        @startPoll() unless @polling? or event isnt 'changed'
-      @on 'removeListener', =>
-        @stopPoll() if @listenerCount('changed') is 0
-
-  polling: null
-
-  stopPoll: ->
-    clearInterval @polling
-    @polling = null
 
   @property 'id',
     get: -> @raw[9003]

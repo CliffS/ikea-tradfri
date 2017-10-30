@@ -6,22 +6,28 @@ INTERVAL = 1000 / 5     # 5 times a second
 
 class Device extends Common
 
-  startPoll: ->
-    console.log "Starting device poll: #{@id}: #{@name}"
-    @polling = setInterval =>
-      @coap.deviceRaw @id, true
-      .then (raw) =>
-        return unless raw?
-        unless IsEqual @raw, raw
-          dev = new Device raw
-          changed = id: @id
-          for prop in @props[1..]
-            changed[prop] = [@[prop], dev[prop]] if @[prop] isnt dev[prop]
-          @raw = raw
-          @emit 'changed', changed
-      .catch (err) =>
-        console.log "ERROR in #{@id}: #{@name}", err.toString()
-    , INTERVAL
+  constructor: ->
+    super arguments...
+    if @coap
+      @on 'newListener', (event) =>
+        if event is 'changed' and @listenerCount('changed') is 0
+          @coap.deviceObserve @id, (response) =>
+            raw = JSON.parse response.payload.toString()
+            return if IsEqual raw, @raw
+            dev = new Device raw
+            changed = id: @id
+            for prop in @props[1..]
+              changed[prop] = [@[prop], dev[prop]] if @[prop] isnt dev[prop]
+            if Object.keys(changed).length is 1
+              changed.old = @raw
+              changed.new = raw
+            @raw = raw
+            @emit 'changed', changed
+          .then ->
+          .catch (err) ->
+            throw err
+      @on 'removeListener', (event) =>
+        @coap.unObserve @id if @listenerCount('changed') is 0
 
   @property 'type',
     get: -> @raw[3][1]

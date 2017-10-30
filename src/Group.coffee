@@ -1,27 +1,19 @@
 Common = require './Common'
-CoAP   = require './CoAP'
 IsEqual = require 'deep-equal'
-
-INTERVAL = 1000 / 5     # 5 times a second
 
 class Group extends Common
 
   startPoll: ->
-    console.log "Starting group poll: #{@id}"
-    @polling = setInterval =>
-      @coap.groupRaw @id, true
-      .then (raw) =>
-        return unless raw?
-        unless IsEqual @raw, raw
-          grp = new Group raw
-          changed = id: @id
-          for prop in @props[1..]
-            changed[prop] = [@[prop], grp[prop]] if @[prop] isnt grp[prop]
-          @raw = raw
-          @emit 'changed', changed
-      .catch (err) =>
-        console.log "ERROR in #{@id}: #{@name}", err.toString()
-    , INTERVAL
+    console.log "Starting group poll: #{@id}: #{@name}"
+    @coap.groupObserve @id, (response) =>
+      response.code = response.code.toString()
+      response.payload = response.payload.toString()
+      console.log response
+    .then (ans) ->
+      console.log "ANS:", ans
+    .catch (err) ->
+      console.log 'ERROR', err
+    
 
   @property 'ison',
     get: ->
