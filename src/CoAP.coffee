@@ -36,6 +36,7 @@ class CoAP
   GET: (url) ->          # Returns a promise
     Coap.request url, 'get'
     .then (result) ->
+      throw new Error "#{url} returned #{result.code}" unless result.code.major is 2
       JSON.parse result.payload.toString()
 
   PUT: (url, payload) ->
@@ -75,11 +76,6 @@ class CoAP
     url.pathname += '/' + id
     Coap.stopObserving url
 
-  process.on 'exit', =>
-    console.log 'Cleaning up...'
-    # Coap.stopObserving url for url from observed
-    Coap.reset()
-
   updateDevice: (id, payload) ->
     url = @deviceURL
     url.pathname += '/' + id
@@ -106,6 +102,10 @@ class CoAP
 
 module.exports = CoAP
 
+process.on 'exit', =>
+  console.log 'Cleaning up...'
+  # Coap.stopObserving url for url from observed
+  Coap.reset()
 process.on 'SIGINT', ->
   process.exit()
 process.on 'SIGTERM', ->

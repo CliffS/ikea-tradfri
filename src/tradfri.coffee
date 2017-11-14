@@ -52,6 +52,7 @@ test.getGroupIds()
   console.log group
   console.log group.toObject()
 ###
+console.log 'getGroups()'
 test.getGroups()
 .then (groups) ->
   console.log (group.toObject() for group in groups)
