@@ -1,5 +1,4 @@
 
-###
 class Property
 
   @property: (name, accessors) ->
@@ -7,8 +6,7 @@ class Property
 
 
 module.exports = Property
-###
 
-Object::property = (name, accessors) ->
-  Object.defineProperty @::, name, accessors
+#Object::property = (name, accessors) ->
+#  Object.defineProperty @::, name, accessors
 

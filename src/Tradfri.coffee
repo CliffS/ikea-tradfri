@@ -1,16 +1,51 @@
-DNS = require 'dns'
-util = require 'util'
-CoAP = require './CoAP'
-sizeof = require('sizeof').sizeof
+NodeTradfri = require 'node-tradfri-client'
+
+Client = NodeTradfri.TradfriClient
+Types  = NodeTradfri.AccessoryTypes
+
 
 class Tradfri
 
-  constructor: (hub, securityId) ->
-    @ip = hub if hub.match /^\d{1,3}.(?:.\d{1,3}){3}$/
-    @coap = new CoAP hub, securityId
+  constructor: (@hub, @securityId) ->
+    @client = new Client @hub
+
+  connect: ->
+    new Promise (resolve, reject) =>
+      @client.authenticate  @securityID
+      .then (identity, psk) =>
+        @client.connect identity, psk
+      .then (ans) =>
+        return reject new Error "Failed to connect" unless ans
+        @client.on 'error', (err) =>
+          console.log "ERROR:", err
+        .on "device updated", (device) =>
+          @devices.set device.instanceId, new Device device
+          console.log "device updated: #{device.name.padEnd 23} #{atype device}"
+        .on "device removed", (device) =>
+          @devices.delete device.instanceId
+          console.log "device removed: #{device.name.padEnd 23} #{atype device}"
+        .on "group updated", (group) =>
+          @groups.set group.instanceId, new Group group
+          console.log "group updated: #{group.name}"
+        .on "group removed", (group) =>
+          @groups.delete group.instanceId
+          console.log "group removed: #{group.name}"
+        .on "scene updated", (scene) =>
+          @scenes.add scene
+          console.log "scene updated: #{scene}"
+        .on "scene removed", (scene) =>
+          @scene.delete scene
+          console.log "scene removed: #{scene}"
 
   reset: ->
-    @coap.reset()
+    @client.reset()
+
+  destroy: ->
+    @client.destroy()
+
+  devices: new Map
+  groups:  new Map
+  scenes:  new Set
 
   getDeviceIds: ->
     @coap.devices()
@@ -35,42 +70,3 @@ class Tradfri
     @coap.group id
 
 
-ID = require('../identity.json').id
-test = new Tradfri 'tradfri.tallinn.may.be', ID
-###
-test.getDeviceIds()
-.then (ids) ->
-  console.log ids
-  test.getDevices()
-.then (devices) ->
-  console.log (device.toObject() for device in devices)
-test.getGroupIds()
-.then (ids) ->
-  console.log ids
-  test.getGroup ids[0]
-.then (group) ->
-  console.log group
-  console.log group.toObject()
-###
-console.log 'getGroups()'
-test.getGroups()
-.then (groups) ->
-  console.log (group.toObject() for group in groups)
-  ###
-  for group in groups
-    do (group) =>
-      group.on 'changed', (what) ->
-        console.log 'GROUP CHANGED', @name, what
-  ###
-  groups[1].getDevices()
-.then (devices) ->
-  dowhat = (what) ->
-    console.log 'CHANGED:', @name, util.inspect what, depth: null
-  for device in devices
-    do (device) ->
-      console.log device.toString()
-      device.on 'changed', dowhat
-  # console.log (device.toObject() for device in devices)
-.catch (err) ->
-  console.log 'Caught', err
-  test.reset()

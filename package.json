@@ -2,12 +2,13 @@
   "name": "ikea-tradfri",
   "version": "1.0.0",
   "description": "A library to access the Ikea Trådfri lighting system without needing to call a separate binary",
-  "main": "lib/tradfri.js",
+  "main": "lib/Tradfri.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "coffee -c -o lib src",
     "wait": "coffee -c -o lib -w src &",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "start": "./testrun.coffee"
   },
   "repository": {
     "type": "git",
@@ -26,12 +27,9 @@
   },
   "homepage": "https://github.com/CliffS/ikea-tradfri#readme",
   "dependencies": {
-    "deep-equal": "^1.0.1",
-    "node-coap-client": "^0.4.8",
-    "sizeof": "^1.0.0"
+    "node-tradfri-client": "^0.4.1"
   },
   "devDependencies": {
-    "coffeescript": "^2.0.1",
-    "node-tradfri": "^0.1.7"
+    "coffeescript": "^2.0.1"
   }
 }
