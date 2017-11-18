@@ -1,6 +1,7 @@
 #!/usr/local/bin/coffee
 
 Tradfri = require './src/Tradfri'
+Group = require './src/Group'
 Identity = require './identity'
 
 sleep = (time = 10) ->
@@ -21,6 +22,15 @@ tradfri.connect()
   # console.log Array.from tradfri.devices.keys()
   # keys = Array.from tradfri.devices.keys()
   # console.log keys
+  await sleep 3
+  group = Group.get 'TRADFRI group 4'
+  console.log group
+  await sleep 2
+  group.scene = 224204
+  await sleep 2
+  group.level = 100
+  await sleep 2
+  console.log group
   await sleep 86400
   tradfri.reset()
 .catch (err) ->

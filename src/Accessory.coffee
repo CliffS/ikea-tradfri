@@ -20,9 +20,10 @@ class Accessory extends EventEmitter
         item = new Sensor device
       else
         throw new Error "Unknown type: #{device.type}"
-    if @devices.has item.id
+    if Accessory.devices.has item.id
       dev = @devices.get item.id
       dev.change item
+      @device = device
       dev
     else
       Accessory.devices.set item.id, item
@@ -39,6 +40,9 @@ class Accessory extends EventEmitter
       item for item from vals when item.name in name
     else
       return item for item from vals when item.name is name
+
+  @byID: (id) ->
+    Accessory.devices.get id
 
   # This is the inherited constructor
   constructor: (device) ->

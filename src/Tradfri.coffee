@@ -39,7 +39,7 @@ class Tradfri extends Property
           Accessory.delete device
           console.log @stamp, "device removed: #{device.name}"
         .on "group updated", (group) =>
-          @groups.set group.instanceId, new Group group
+          Group.update group
           console.log @stamp, "group updated: #{group.name}"
           # console.log group
         .on "group removed", (group) =>
@@ -47,7 +47,7 @@ class Tradfri extends Property
           console.log @stamp, "group removed: #{group.name}"
         .on "scene updated", (group, scene) =>
           @scenes.add scene
-          console.log @stamp, "group #{group}, scene updated: ", scene.name
+          console.log @stamp, "group #{group}, scene updated: ", scene.instanceId, scene.name
         .on "scene removed", (group, scene) =>
           @scenes.delete scene
           console.log @stamp, "group #{group}, scene removed: #{scene.name}"
