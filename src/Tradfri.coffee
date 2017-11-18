@@ -41,15 +41,16 @@ class Tradfri extends Property
         .on "group updated", (group) =>
           @groups.set group.instanceId, new Group group
           console.log @stamp, "group updated: #{group.name}"
+          # console.log group
         .on "group removed", (group) =>
           @groups.delete group.instanceId
           console.log @stamp, "group removed: #{group.name}"
-        .on "scene updated", (scene) =>
+        .on "scene updated", (group, scene) =>
           @scenes.add scene
-          console.log @stamp, "scene updated: #{scene}"
-        .on "scene removed", (scene) =>
-          @scene.delete scene
-          # console.log @stamp, "scene removed: #{scene}"
+          console.log @stamp, "group #{group}, scene updated: ", scene.name
+        .on "scene removed", (group, scene) =>
+          @scenes.delete scene
+          console.log @stamp, "group #{group}, scene removed: #{scene.name}"
         Promise.all [
           @client.observeDevices()
           @client.observeGroupsAndScenes()

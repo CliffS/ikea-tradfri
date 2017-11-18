@@ -29,7 +29,9 @@ class Accessory extends EventEmitter
       item
 
   @delete: (device) ->
+    deleted = Accessory.devices.get device.instanceId
     Accessory.devices.delete device.instanceId
+    deleted.delete()
 
   @get: (name) ->
     vals = Accessory.devices.values()
@@ -41,6 +43,7 @@ class Accessory extends EventEmitter
   # This is the inherited constructor
   constructor: (device) ->
     super()
+    @deleted = false
     @id = device.instanceId
     @type = Types[device.type]
     @name = device.name
@@ -61,6 +64,9 @@ class Accessory extends EventEmitter
     console.log @ if @name is 'Cliff Standard Lamp'
     @emit 'change', changed
 
+  delete: ->
+    @deleted = true
+    @emit 'deleted'
 
 module.exports = Accessory
 
