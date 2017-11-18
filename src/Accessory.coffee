@@ -3,40 +3,64 @@ Types   =  require('node-tradfri-client').AccessoryTypes
 
 console.log Types
 
-class Accessory # extends EventEmitter
+class Accessory extends EventEmitter
+
+  @devices: new Map
 
   # Bulb, Remote, Sensor etc. should not be constructed externally
   # but should be created here
-  @create: (device) ->
+  @update: (device) ->
     type = Types[device.type]
     switch type
       when 'lightbulb'
         item = new Bulb device
-        Accessory.lights.set item
       when 'remote'
         item = new Remote device
-        Accessory.remotes.set item
       when 'motionSensor'
         item = new Sensor device
-        Accessory.sensors.set item
       else
         throw new Error "Unknown type: #{device.type}"
-    item
+    if @devices.has item.id
+      dev = @devices.get item.id
+      dev.change item
+      dev
+    else
+      Accessory.devices.set item.id, item
+      item
 
-  @lights:  new Map
-  @remotes: new Map
-  @sensors: new Map
+  @delete: (device) ->
+    Accessory.devices.delete device.instanceId
+
+  @get: (name) ->
+    vals = Accessory.devices.values()
+    if Array.isArray name
+      item for item from vals when item.name in name
+    else
+      return item for item from vals when item.name is name
 
   # This is the inherited constructor
   constructor: (device) ->
-    # super()
+    super()
     @id = device.instanceId
     @type = Types[device.type]
     @name = device.name
-    @lastSeen = new Date device.lastseen
+    @alive = device.alive
 
-    Object.defineProperty @, 'device',  # immutable property
+    Object.defineProperty @, 'device',  # non-enumerable property
+      writable: true
       value: device
+
+  change: (newer) ->
+    changed = name: @name
+    for own k, v of newer when v isnt @[k] and k[0] isnt '_'
+      changed[k] =
+        old: @[k]
+        new: newer[k]
+      @[k] = newer[k]
+    console.log @id, changed if Object.keys(changed).length isnt 1
+    console.log @ if @name is 'Cliff Standard Lamp'
+    @emit 'change', changed
+
 
 module.exports = Accessory
 

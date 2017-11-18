@@ -27,7 +27,6 @@
   },
   "homepage": "https://github.com/CliffS/ikea-tradfri#readme",
   "dependencies": {
-    "node-tradfri-client": "^0.4.1"
   },
   "devDependencies": {
     "coffeescript": "^2.0.1"
