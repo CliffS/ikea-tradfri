@@ -31,8 +31,9 @@ class Accessory extends EventEmitter
 
   @delete: (device) ->
     deleted = Accessory.devices.get device.instanceId
-    Accessory.devices.delete device.instanceId
-    deleted.delete()
+    if deleted?
+      Accessory.devices.delete device.instanceId
+      deleted.delete()
 
   @get: (name) ->
     vals = Accessory.devices.values()
@@ -64,9 +65,9 @@ class Accessory extends EventEmitter
         old: @[k]
         new: newer[k]
       @[k] = newer[k]
-    console.log @id, changed if Object.keys(changed).length isnt 1
-    console.log @ if @name is 'Cliff Standard Lamp'
-    @emit 'change', changed
+    # console.log @id, changed if Object.keys(changed).length isnt 1
+    # console.log @ if @name is 'Cliff Standard Lamp'
+    @emit 'changed', changed if Object.keys(changed).length isnt 1
 
   delete: ->
     @deleted = true

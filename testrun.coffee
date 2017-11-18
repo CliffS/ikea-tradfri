@@ -2,6 +2,7 @@
 
 Tradfri = require './src/Tradfri'
 Group = require './src/Group'
+Bulb = require './src/Bulb'
 Identity = require './identity'
 
 sleep = (time = 10) ->
@@ -25,12 +26,27 @@ tradfri.connect()
   await sleep 3
   group = Group.get 'TRADFRI group 4'
   console.log group
-  await sleep 2
-  group.scene = 224204
-  await sleep 2
+  await sleep 1
+  group.scene = 'test'
+  await sleep 1
   group.level = 100
-  await sleep 2
+  await sleep 1
   console.log group
+  console.log "Scene: #{group.scene}"
+  console.log ( [scene.id, scene.name] for scene in group.scenes )
+  console.log '------------------------'
+  bulb = Bulb.get 'Cliff Standard Lamp'
+  .on 'changed', (change) ->
+    console.log change #, bulb
+  console.log bulb
+  for colour in [100..0] by -10
+    console.log "Setting brightness to #{colour}"
+    bulb.level = colour
+    await sleep 1
+  for colour in [0..100] by 10
+    console.log "Setting brightness to #{colour}"
+    bulb.level = colour
+    await sleep 1
   await sleep 86400
   tradfri.reset()
 .catch (err) ->

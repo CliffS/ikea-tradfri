@@ -43,20 +43,23 @@ class Tradfri extends Property
           console.log @stamp, "group updated: #{group.name}"
           # console.log group
         .on "group removed", (group) =>
-          @groups.delete group.instanceId
+          Group.delete group
           console.log @stamp, "group removed: #{group.name}"
-        .on "scene updated", (group, scene) =>
-          @scenes.add scene
-          console.log @stamp, "group #{group}, scene updated: ", scene.instanceId, scene.name
-        .on "scene removed", (group, scene) =>
-          @scenes.delete scene
-          console.log @stamp, "group #{group}, scene removed: #{scene.name}"
-        Promise.all [
-          @client.observeDevices()
-          @client.observeGroupsAndScenes()
-        ]
-      .then (result) =>
-        # await sleep 3
+        .on "scene updated", (groupID, scene) =>
+          group = Group.byID groupID
+          throw new Error "Missing group #{groupID}" unless group
+          group.addScene scene
+          console.log @stamp, "group #{group.name}, scene updated: ", scene.instanceId, scene.name
+          # console.log scene if scene.name is 'Crochet'
+        .on "scene removed", (groupID, scene) =>
+          group = Group.byID groupID
+          throw new Error "Missing group #{groupID}" unless group
+          group.delScene scene
+          console.log @stamp, "group #{group.name}, scene removed: #{scene.id}"
+        @client.observeDevices()
+      .then =>      # Need the devices in place so not Promise.all()
+        @client.observeGroupsAndScenes()
+      .then =>
         console.log @stamp, "Resolving"
         resolve()
       .catch (err) ->

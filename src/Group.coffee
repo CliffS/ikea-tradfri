@@ -1,4 +1,5 @@
 Property = require './Property'
+Scene = require './Scene'
 
 class Group extends Property
 
@@ -8,7 +9,7 @@ class Group extends Property
     newgroup = new Group group
     if Group.groups.has newgroup.id
       grp = Group.groups.get newgroup.id
-      grp.change newgroup
+      grp.change newgroup, group
       grp
     else
       Group.groups.set newgroup.id, newgroup
@@ -16,8 +17,9 @@ class Group extends Property
 
   @delete: (group) ->
     deleted = Group.groups.get group.instanceId
-    Group.groups.delete group.instanceId
-    deleted.delete()
+    if deleted?
+      Group.groups.delete group.instanceId
+      deleted.delete()
 
   @get: (name) ->
     return group for group from Group.groups.values() when group.name is name
@@ -38,8 +40,23 @@ class Group extends Property
       writable: true
       value: group
 
-  change: (newgroup) ->
+    Object.defineProperty @, 'groupScenes',
+      writable: true
+      value: new Map
+
+  change: (newgroup, @rawGroup) ->
     @[k] = v for own k, v of newgroup when v?
+    @groupScenes = newgroup.groupScenes
+
+  addScene: (scene) ->
+    scene = new Scene scene unless scene instanceof Scene
+    @groupScenes.set scene.id, scene
+
+  getScene: (name) ->
+    return scene for scene from @groupScenes.values() when scene.name is name
+
+  delScene: (scene) ->
+    @groupScenes.delete scene.id
 
   @property 'switch',
     set: (onOff) ->
@@ -49,16 +66,20 @@ class Group extends Property
       @isOn
 
   @property 'scene',
-    set: (id) ->
-      # console.log @rawGroup
-      # process.exit()
-      @rawGroup.operateGroup sceneId: id
-      .then (ok) ->
-        @sceneId = id if ok
-      .catch (err) ->
-        console.log err
+    set: (name) ->
+      id = @getScene(name).id
+      if id
+        @rawGroup.operateGroup sceneId: id
+        .then (ok) ->
+          @sceneId = id if ok
+        .catch (err) ->
+          console.log err
     get: ->
-      @sceneId
+      @groupScenes.get(@sceneId).name
+
+  @property 'scenes',
+    get: ->
+      Array.from @groupScenes.values()
 
   @property 'level',
     set: (level) ->

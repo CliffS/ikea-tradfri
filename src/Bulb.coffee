@@ -22,6 +22,10 @@ class Bulb extends Accessory
     @hue          =  light.hue          if light.hue?
     @saturation   =  light.saturation   if light.saturation?
 
+  operate: (obj) ->
+    tradfri = @device.client
+    tradfri.operateLight @device, obj
+
   @property "switch",
     set: (onOff) ->
       @device.toggle onOff
@@ -32,12 +36,20 @@ class Bulb extends Accessory
 
   @property "level",
     set: (level) ->
-      @device.setBrightness level
+      # @device.setBrightness level
+      @operate dimmer: level
       .then (ok) =>
-        @brightness = level if ok
+        # @brightness = level if ok
+      .catch (err) =>
+        console.log "ERROR", err
     get: ->
       @brightness
 
+  colours =
+    white: 'f5faf6'
+    warm:  'f1e0b5'
+    glow:  'efd275'
+      
   @property "colour",
     set: (colour) ->
       switch @spectrum
@@ -52,9 +64,14 @@ class Bulb extends Accessory
             else
               temp = parseInt colour
               throw new Error "Unknown colour of #{colour}" unless 0 <= temp <= 100   # 0 to 100 inclusive
-          @device.setColorTemperature temp
-          .then (ok) ->
+          @operate
+            colorTemperature: temp
+          .then (ok) =>
             @temperature = temp
+          .catch (err) =>
+            console.log @device.lightList[0]
+            console.log err
+            process.exit 1
         when 'rgb'
           throw new Error 'Not written yet'
         when 'none'
