@@ -84,7 +84,7 @@ class Tradfri extends Property
   device: (name) ->
     Accessory.get name
 
-  groups:  new Map
-  scenes:  new Set
+  group: (name) ->
+    Group.get name
 
 module.exports = Tradfri

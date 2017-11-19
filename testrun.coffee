@@ -1,8 +1,6 @@
 #!/usr/local/bin/coffee
 
 Tradfri = require './src/Tradfri'
-Group = require './src/Group'
-Bulb = require './src/Bulb'
 Identity = require './identity'
 
 sleep = (time = 10) ->
@@ -26,7 +24,7 @@ tradfri.connect()
   # keys = Array.from tradfri.devices.keys()
   # console.log keys
   # await sleep 3
-  group = Group.get 'TRADFRI group 4'
+  group = tradfri.group 'TRADFRI group 4'
   console.log group
   await sleep 1
   group.scene = 'test'
@@ -37,7 +35,7 @@ tradfri.connect()
   console.log "Scene: #{group.scene}"
   console.log ( [scene.id, scene.name] for scene in group.scenes )
   console.log '------------------------'
-  bulb = Bulb.get 'Cliff Standard Lamp'
+  bulb = tradfri.device 'Cliff Standard Lamp'
   .on 'changed', (change) ->
     console.log change #, bulb
   console.log bulb
