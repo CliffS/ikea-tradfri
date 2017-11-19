@@ -67,7 +67,7 @@ class Group extends Property
 
   @property 'scene',
     set: (name) ->
-      id = @getScene(name).id
+      id = @getScene(name)?.id
       if id
         @rawGroup.operateGroup sceneId: id
         .then (ok) ->
@@ -75,7 +75,7 @@ class Group extends Property
         .catch (err) ->
           console.log err
     get: ->
-      @groupScenes.get(@sceneId).name
+      @groupScenes.get(@sceneId)?.name
 
   @property 'scenes',
     get: ->

@@ -9,10 +9,12 @@ sleep = (time = 10) ->
   new Promise (resolve, reject) ->
     setTimeout resolve, time * 1000
 
-tradfri = new Tradfri 'tradfri.tallinn.may.be', Identity.id
+tradfri = new Tradfri 'tradfri.tallinn.may.be', Identity #.id
 
 tradfri.connect()
-.then ->
+.then (credentials) ->
+  console.log "Credentials: ", credentials
+  # tradfri_1511083761610
   # await sleep()
   console.log '------------------------------------'
   #console.log tradfri.device 'Hallway 2'
@@ -50,5 +52,6 @@ tradfri.connect()
   await sleep 86400
   tradfri.reset()
 .catch (err) ->
-  console.log err
+  console.log "TESTRUN ERROR: #{err}"
+  process.exit 1
 

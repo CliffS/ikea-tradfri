@@ -9,6 +9,6 @@ class Scene extends Property
     @name        =  scene.name
     @predefined  =  scene.isPredefined
     @index       =  scene.sceneIndex
-    @lights      =  (light.instanceId for light in scene.lightSettings)
+    @lights      =  (light.instanceId for light in scene.lightSettings ? [])
 
 module.exports = Scene
