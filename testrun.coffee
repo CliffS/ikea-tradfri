@@ -25,7 +25,7 @@ tradfri.connect()
   # console.log Array.from tradfri.devices.keys()
   # keys = Array.from tradfri.devices.keys()
   # console.log keys
-  await sleep 3
+  # await sleep 3
   group = Group.get 'TRADFRI group 4'
   console.log group
   await sleep 1

@@ -70,6 +70,8 @@ class Tradfri extends Property
     .then =>      # Need the devices in place so not Promise.all()
       @client.observeGroupsAndScenes()
     .then =>
+      sleep 2     # Remove this when AlCalzone has fixed observeGroupsAndScenes
+    .then =>
       console.log @stamp, "Resolving"
       credentials
 
