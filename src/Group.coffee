@@ -72,8 +72,7 @@ class Group extends Property
         @rawGroup.operateGroup sceneId: id
         .then (ok) ->
           @sceneId = id if ok
-        .catch (err) ->
-          console.log err
+        .catch (err) =>
     get: ->
       @groupScenes.get(@sceneId)?.name
 
@@ -87,6 +86,7 @@ class Group extends Property
       .then (ok) =>
         console.log 'OK', ok, @
         @dimmer = level if ok
+      .catch (err) =>
     get: ->
       @dimmer
 

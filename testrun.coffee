@@ -41,6 +41,7 @@ tradfri.connect()
   .on 'changed', (change) ->
     console.log change #, bulb
   console.log bulb
+  bulb.color = 'glow'
   for colour in [100..0] by -10
     console.log "Setting brightness to #{colour}"
     bulb.level = colour
@@ -49,6 +50,7 @@ tradfri.connect()
     console.log "Setting brightness to #{colour}"
     bulb.level = colour
     await sleep 1
+  bulb.color = 'white'
   await sleep 86400
   tradfri.reset()
 .catch (err) ->

@@ -50,13 +50,16 @@ class Accessory extends EventEmitter
     super()
     @deleted = false
     @id = device.instanceId
-    @type = Types[device.type]
+    #@type = Types[device.type]
     @name = device.name
     @alive = device.alive
 
     Object.defineProperty @, 'device',  # non-enumerable property
       writable: true
       value: device
+    Object.defineProperty @, 'type',
+      enumerable: true
+      value: @.constructor.name
 
   change: (newer) ->
     changed = name: @name
@@ -65,13 +68,13 @@ class Accessory extends EventEmitter
         old: @[k]
         new: newer[k]
       @[k] = newer[k]
-    # console.log @id, changed if Object.keys(changed).length isnt 1
-    # console.log @ if @name is 'Cliff Standard Lamp'
+    # don't emit a change unless something's actually changed
     @emit 'changed', changed if Object.keys(changed).length isnt 1
 
   delete: ->
     @deleted = true
-    @emit 'deleted'
+    @emit 'deleted', @
+
 
 module.exports = Accessory
 

@@ -31,17 +31,16 @@ class Bulb extends Accessory
       @device.toggle onOff
       .then (ok) =>
         @ison = onOff if ok
+      .catch (err) =>
     get: ->
       @isOn
 
   @property "level",
     set: (level) ->
-      # @device.setBrightness level
       @operate dimmer: level
       .then (ok) =>
-        # @brightness = level if ok
+        @brightness = level if ok
       .catch (err) =>
-        console.log "ERROR", err
     get: ->
       @brightness
 
@@ -67,11 +66,8 @@ class Bulb extends Accessory
           @operate
             colorTemperature: temp
           .then (ok) =>
-            @temperature = temp
+            @temperature = temp if ok
           .catch (err) =>
-            console.log @device.lightList[0]
-            console.log err
-            process.exit 1
         when 'rgb'
           throw new Error 'Not written yet'
         when 'none'
