@@ -104,7 +104,7 @@ This object should be stored, perhaps as a JSON file, for future use.
 Subsequently the call could look like this:
 
 ```coffeescript
-Identity = require './identity'
+Identity = require './identity'  # stored in identity.json
 tradfri = new Tradfri 'device.example.com', Identity
 try
   await tradfri.connect()
@@ -134,18 +134,20 @@ by tracking a connected Bulb.
 
 ### Getting a Device
 
-To get a device, it is very simple.  Using the `tradfri` variable created above
-you call `tradfi.device(name)` where `name` is the name of the device you are looking
-for.  It will return the approriate class for `name` or `undefined` if it is
-not found.
+To get a device, it is very simple.  Using the `tradfri` variable created
+above, you call `tradfi.device(name)` where `name` is the name of the device
+you are looking for.  It will return the approriate class for `name` or
+`undefined` if it is not found.
 
-`name` can also be an array of device names.  In this case, `trafri.device(array)` will
-return an array of all the devices matched or an empty array if none are found.
+`name` can also be an array of device names.  In this case,
+`trafri.device(array)` will return an array of all the devices matched or an
+empty array if none are found.  Currently there is no provision
+for wildcards.
 
 ### Device Properties
 
 These are the properties that are common to all devices.  All these properties
-should be considered read-only as changing them will not currently be fed
+should be considered read-only. Changing them will currently not be fed
 back to the controller.
 
 - **id** *(integer)*
@@ -196,7 +198,7 @@ The following are the read-write properties of a Bulb:
 - **switch** *(boolean)*
 
   This is the on-off switch.  It can be read to get the state of the
-  Bulb or written to. to turn the bulb on or off.
+  Bulb.  Writing to it will turn the bulb on or off.
 
 ```coffeescript
 bulb = tradfri.device 'Bulb number 1'
@@ -227,7 +229,7 @@ bulb.level = 50
   colour temperature and 100 is the warmest.
 
   Reading the property will return "white", "warm" or "glow" if its
-  value matches one of those settings (1, 62 and 97, respectively) 
+  value matches one of those settings (1, 62 or 97, respectively) 
   or it will return the current value.
 
 ```coffeescript
@@ -262,8 +264,8 @@ Currently only two events are emitted:
   controller. It is passed a parameter of the Device's name.
 
 ```coffeescript
-bulb.on "deleted", (name) ->
-  console.log "bulb.#{name} has just been deleted"
+device.on "deleted", (name) ->
+  console.log "device.#{name} has just been deleted"
 ```
 
 - **changed**
@@ -273,7 +275,7 @@ bulb.on "deleted", (name) ->
   keys: 
   
   * name    - the name of the device
-  * changed - an object containing one or more attributes as keys
+  * changed - an object containing one or more attributes as keys,
     where each value is an object containing `old` and `new`, describing
     the change.
 
@@ -333,7 +335,7 @@ group.switch = on
 - **level** *(integer percentage)*
 
   Writing to this will set all bulbs in the group to the required level.
-  Reading it will return th elast group value applied.
+  Reading it will return the last group value applied.
 
 ```coffeescript
 group = tradfri.group 'Hallway'
@@ -352,7 +354,7 @@ group = tradfri.group 'Hallway'
 console.log "#{group.name} is currently set to #{group.scene}"
 group.scene = 'Romantic'
 ```
-## Acknowlengments
+## Acknowlegements
 
 Many thanks to [AlCalzone] for his excellent libraries, without which
 this library would have been infinitely harder.
