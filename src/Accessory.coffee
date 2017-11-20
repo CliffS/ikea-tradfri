@@ -62,18 +62,20 @@ class Accessory extends EventEmitter
       value: @.constructor.name
 
   change: (newer) ->
-    changed = name: @name
+    result  = name: @name
+    changed = {}
     for own k, v of newer when v isnt @[k] and k[0] isnt '_'
       changed[k] =
         old: @[k]
         new: newer[k]
       @[k] = newer[k]
+    result.changed = changed
     # don't emit a change unless something's actually changed
-    @emit 'changed', changed if Object.keys(changed).length isnt 1
+    @emit 'changed', result if Object.keys(changed).length isnt 0
 
   delete: ->
     @deleted = true
-    @emit 'deleted', @
+    @emit 'deleted', @name
 
 
 module.exports = Accessory

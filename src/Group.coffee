@@ -78,7 +78,7 @@ class Group extends Property
 
   @property 'scenes',
     get: ->
-      Array.from @groupScenes.values()
+      Array.from(@groupScenes.values()).map (value) => value.name
 
   @property 'level',
     set: (level) ->
