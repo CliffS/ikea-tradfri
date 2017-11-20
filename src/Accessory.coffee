@@ -1,8 +1,6 @@
 EventEmitter = require 'events'
 Types   =  require('node-tradfri-client').AccessoryTypes
 
-console.log Types
-
 class Accessory extends EventEmitter
 
   @devices: new Map

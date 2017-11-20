@@ -73,12 +73,19 @@ tool, probably the Ikea app for Android or iPhone.
 There are two ways to connect. The first time you should use
 the security code printed on the base of the controller.  You should then
 save the returned credentials and always use these credentials when
-connecting in the future.  <small>If you continue to use the
-security code, the controller will gradually forget about any connected apps
-and these will need to reauthenticate.</small>
+connecting in the future.
+
+**NB** If you continue to use the
+security code, the controller will gradually forget about any
+other connected apps and these will need to reauthenticate.
 
 The host can be a domain name such as `device.example.com`
 or a dotted IP address such as `192.168.1.20`.
+
+`tradfri.connect()` returns  Promise.  You should wait for
+the promise to resolve before continuing.  This can be done
+with a `.then()` or by `await`ing the result.  Either way you
+should `catch` any error.
 
 ### First time
 

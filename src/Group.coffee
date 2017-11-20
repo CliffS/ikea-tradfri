@@ -84,7 +84,6 @@ class Group extends Property
     set: (level) ->
       @rawGroup.operateGroup dimmer: level
       .then (ok) =>
-        console.log 'OK', ok, @
         @dimmer = level if ok
       .catch (err) =>
     get: ->

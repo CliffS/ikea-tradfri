@@ -21,10 +21,6 @@ class Tradfri extends Property
     super()
     @client = new Client @hub
 
-  @property 'stamp',
-    get: ->
-      new Date().toJSON()
-
   connect: ->
     credentials = undefined
     (
@@ -41,38 +37,29 @@ class Tradfri extends Property
     .then (ans) =>
       throw new Error "Failed to connect" unless ans
       @client.on 'error', (err) =>
-        console.log "ERROR:", err
+        console.error err # Just log it to STDERR and carry on
       .on "device updated", (device) =>
         newdev = Accessory.update device
-        # console.log @stamp, "device updated: #{newdev.name} - #{newdev.alive}"
       .on "device removed", (device) =>
         Accessory.delete device
-        console.log @stamp, "device removed: #{device.name}"
       .on "group updated", (group) =>
         Group.update group
-        console.log @stamp, "group updated: #{group.name}"
-        # console.log group
       .on "group removed", (group) =>
         Group.delete group
-        console.log @stamp, "group removed: #{group.name}"
       .on "scene updated", (groupID, scene) =>
         group = Group.byID groupID
         throw new Error "Missing group #{groupID}" unless group
         group.addScene scene
-        console.log @stamp, "group #{group.name}, scene updated: ", scene.instanceId, scene.name
-        # console.log scene if scene.name is 'Crochet'
       .on "scene removed", (groupID, scene) =>
         group = Group.byID groupID
         throw new Error "Missing group #{groupID}" unless group
         group.delScene scene
-        console.log @stamp, "group #{group.name}, scene removed: #{scene.id}"
       @client.observeDevices()
     .then =>      # Need the devices in place so not Promise.all()
       @client.observeGroupsAndScenes()
     .then =>
       sleep 2     # Remove this when AlCalzone has fixed observeGroupsAndScenes
     .then =>
-      console.log @stamp, "Resolving"
       credentials
 
   reset: ->

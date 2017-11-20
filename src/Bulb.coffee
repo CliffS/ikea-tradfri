@@ -8,8 +8,6 @@ class Bulb extends Accessory
 
   constructor: (device) ->
     super device
-    # console.log device
-    # process.exit 1
     light = device.lightList[0]
     @brightness   =  light.dimmer
     @isOn         =  light.onOff
