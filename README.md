@@ -20,10 +20,10 @@ tradfri.connect()
 .then (credentials) ->
   # store the credentials if necessary
   group4 = tradfri.group 'TRADFRI group 4'  # find the group
-  group4.scene = 'RELAX'                    # set the scene (mood)
-  bulb = tradfri.device 'Standard Lamp'     # find a bulb
+  group4.scene = 'RELAX'                    # Set the scene (mood)
+  bulb = tradfri.device 'Standard Lamp'     # Find a bulb
   bulb.colour = 'white'                     # Set the cool colour
-  bulb.level  = 50                          # Half brightness
+  bulb.level  = 50                          # Set half brightness
 .catch (err) ->
   console.error "Failed to connect: #{err}"
 ```
@@ -70,12 +70,12 @@ tool, probably the Ikea app for Android or iPhone.
 
 ## Connecting to the Trådfri Controller
 
-There are two ways to connect. The first time you should use
+There are two ways to connect. The first time, you should use
 the security code printed on the base of the controller.  You should then
 save the returned credentials and always use these credentials when
 connecting in the future.
 
-**NB** If you continue to use the
+**NB:** If you continue to use the
 security code, the controller will gradually forget about any
 other connected apps and these will need to reauthenticate.
 
@@ -136,12 +136,12 @@ For this library to work correctly, each device and group should be
 distinctly named as the library works exclusively from those names.
 
 The Trådfri controller only permits Bulbs to be tracked.  There seems
-to be no way to know that a Remote has been activated, other than 
+to be no way to know when a Remote has been activated, other than 
 by tracking a connected Bulb.
 
 ### Getting a Device
 
-To get a device, it is very simple.  Using the `tradfri` variable created
+Using the `tradfri` variable created
 above, you call `tradfi.device(name)` where `name` is the name of the device
 you are looking for.  It will return the approriate class for `name` or
 `undefined` if it is not found.
@@ -159,12 +159,13 @@ back to the controller.
 
 - **id** *(integer)*
 
-  This is internal ID used by the controller.  It is not usually necessary to 
-use this ID.
+  This is the internal ID used by the controller.
+  It is not usually necessary to use this ID in this library.
 
 - **name** *(string)*
 
-  This is the name of the device and is the usual way to access it in this library.
+  This is the name of the device and is the usual way to access it in this
+  library.
 
 - **type** *(string)*
 
@@ -204,7 +205,7 @@ The following are the read-write properties of a Bulb:
 
 - **switch** *(boolean)*
 
-  This is the on-off switch.  It can be read to get the state of the
+  This is the on-off switch.  Reading it will get the state of the
   Bulb.  Writing to it will turn the bulb on or off.
 
 ```coffeescript
@@ -237,7 +238,7 @@ bulb.level = 50
 
   Reading the property will return "white", "warm" or "glow" if its
   value matches one of those settings (1, 62 or 97, respectively) 
-  or it will return the current value.
+  or it will return the current numerical value.
 
 ```coffeescript
 bulb = tradfri.device 'Bulb number 1'
@@ -329,8 +330,8 @@ The writable properties are as follows:
 - **switch** *(boolean)*
 
   Setting this to on (true) will turn on all the bulbs in the
-  Group.  Setting it to off (false) will turn them off.
-  Reading this will give the current Group value which may or
+  group.  Setting it to off (false) will turn them off.
+  Reading this will give the current group value which may or
   may not reflect the state of the bulbs.
 
 ```coffeescript
@@ -341,7 +342,7 @@ group.switch = on
 
 - **level** *(integer percentage)*
 
-  Writing to this will set all bulbs in the group to the required level.
+  Setting this will set all bulbs in the group to the required level.
   Reading it will return the last group value applied.
 
 ```coffeescript
@@ -352,7 +353,7 @@ group.level - 50
 
 - **scene** *(string)*
 
-  This will return the name of the currently set scene, if any.
+  Reading this will return the name of the currently set scene, if any.
   Setting this property will set the scene for the group, so long
   as the name matches one of the scenes from the group.
 
@@ -364,7 +365,7 @@ group.scene = 'Romantic'
 ## Acknowlegements
 
 Many thanks to [AlCalzone] for his excellent libraries, without which
-this library would have been infinitely harder.
+this library would have been infinitely harder to write.
 
 ## Issues
 
