@@ -1,0 +1,47 @@
+65537 { name: 'Cliff Standard Lamp', isOn: { old: true, new: false } }
+65539 { name: 'Sitting Area 1', isOn: { old: true, new: false } }
+65541 { name: 'Sitting Area 3', isOn: { old: true, new: false } }
+65542 { name: 'Sitting Area 4', isOn: { old: true, new: false } }
+65543 { name: 'Dining Area 1', isOn: { old: true, new: false } }
+65544 { name: 'Dining Area 2', isOn: { old: true, new: false } }
+65546 { name: 'Dining Area 4', isOn: { old: true, new: false } }
+65548 { name: 'Sofa Panel', isOn: { old: true, new: false } }
+65549 { name: 'Dining Table Lamp', isOn: { old: true, new: false } }
+
+65537 { name: 'Cliff Standard Lamp', isOn: { old: false, new: true } }
+65539 { name: 'Sitting Area 1', isOn: { old: false, new: true } }
+65541 { name: 'Sitting Area 3', isOn: { old: false, new: true } }
+65542 { name: 'Sitting Area 4', isOn: { old: false, new: true } }
+65543 { name: 'Dining Area 1', isOn: { old: false, new: true } }
+65544 { name: 'Dining Area 2', isOn: { old: false, new: true } }
+65546 { name: 'Dining Area 4', isOn: { old: false, new: true } }
+65548 { name: 'Sofa Panel', isOn: { old: false, new: true } }
+65549 { name: 'Dining Table Lamp', isOn: { old: false, new: true } }
+
+65537 { name: 'Cliff Standard Lamp', brightness: { old: 22, new: 40 } }
+65539 { name: 'Sitting Area 1', brightness: { old: 22, new: 40 } }
+65541 { name: 'Sitting Area 3', brightness: { old: 22, new: 40 } }
+65542 { name: 'Sitting Area 4', brightness: { old: 22, new: 40 } }
+65543 { name: 'Dining Area 1', brightness: { old: 22, new: 40 } }
+65544 { name: 'Dining Area 2', brightness: { old: 22, new: 40 } }
+65546 { name: 'Dining Area 4', brightness: { old: 22, new: 40 } }
+65548 { name: 'Sofa Panel', brightness: { old: 22, new: 40 } }
+65549 { name: 'Dining Table Lamp', brightness: { old: 22, new: 40 } }
+
+
+65539 { name: 'Sitting Area 1', brightness: { old: 100, new: 10 } }
+65539 { name: 'Sitting Area 1', temperature: { old: 1, new: 97 }, colour: { old: 'f5faf6', new: 'efd275' } }
+65541 { name: 'Sitting Area 3', brightness: { old: 100, new: 10 } }
+65541 { name: 'Sitting Area 3', temperature: { old: 1, new: 97 }, colour: { old: 'f5faf6', new: 'efd275' } }
+65542 { name: 'Sitting Area 4', brightness: { old: 100, new: 10 } }
+65542 { name: 'Sitting Area 4', temperature: { old: 1, new: 97 }, colour: { old: 'f5faf6', new: 'efd275' } }
+65543 { name: 'Dining Area 1', brightness: { old: 100, new: 10 } }
+65543 { name: 'Dining Area 1', temperature: { old: 1, new: 97 }, colour: { old: 'f5faf6', new: 'efd275' } }
+65544 { name: 'Dining Area 2', brightness: { old: 100, new: 10 } }
+65544 { name: 'Dining Area 2', temperature: { old: 1, new: 97 }, colour: { old: 'f5faf6', new: 'efd275' } }
+65546 { name: 'Dining Area 4', brightness: { old: 100, new: 10 } }
+65546 { name: 'Dining Area 4', temperature: { old: 1, new: 97 }, colour: { old: 'f5faf6', new: 'efd275' } }
+65548 { name: 'Sofa Panel', brightness: { old: 100, new: 10 } }
+65548 { name: 'Sofa Panel', temperature: { old: 1, new: 97 }, colour: { old: 'f5faf6', new: 'efd275' } }
+65549 { name: 'Dining Table Lamp', brightness: { old: 100, new: 10 } }
+65549 { name: 'Dining Table Lamp', temperature: { old: 1, new: 97 }, colour: { old: 'f5faf6', new: 'efd275' } }

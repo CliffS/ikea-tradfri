@@ -49,6 +49,8 @@ tradfri.connect()
     bulb.level = colour
     await sleep 1
   bulb.color = 'white'
+  await sleep 1
+  bulb.switch = off
   await sleep 86400
   tradfri.reset()
 .catch (err) ->

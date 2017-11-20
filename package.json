@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "coffee -c -o lib src",
-    "wait": "coffee -c -o lib -w src &",
+    "watch": "coffee -c -o lib -w src &",
     "prepublishOnly": "npm run build",
     "start": "./testrun.coffee"
   },
