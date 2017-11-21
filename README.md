@@ -63,6 +63,7 @@ tool, probably the Ikea app for Android or iPhone.
 [AlCalzone]: https://www.npmjs.com/~alcalzone
 [issues]: https://github.com/CliffS/ikea-tradfri/issues
 [glpl]: https://www.gnu.org/licenses/lgpl-3.0.en.html
+[Ikea]: http://www.ikea.com/
 
 ## Installation
 
@@ -366,6 +367,9 @@ group.scene = 'Romantic'
 
 Many thanks to [AlCalzone] for his excellent libraries, without which
 this library would have been infinitely harder to write.
+
+I have no affiliation to [Ikea] and this library is not approved or
+endorsed in any way by Ikea.
 
 ## Issues
 
