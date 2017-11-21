@@ -1,7 +1,7 @@
 #!/usr/local/bin/coffee
 
-Tradfri = require './src/Tradfri'
-Identity = require './identity'
+Tradfri = require '../src/Tradfri'
+Identity = require '../identity'
 
 sleep = (time = 10) ->
   new Promise (resolve, reject) ->
