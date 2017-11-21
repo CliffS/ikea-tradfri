@@ -22,11 +22,11 @@ class Bulb extends Accessory
 
   operate: (obj) ->
     tradfri = @device.client
-    tradfri.operateLight @device, obj
+    await tradfri.operateLight @device, obj
 
   @property "switch",
     set: (onOff) ->
-      @device.toggle onOff
+      @operate onOff: onOff
       .then (ok) =>
         @ison = onOff if ok
       .catch (err) =>
