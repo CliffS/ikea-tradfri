@@ -56,10 +56,8 @@ class Tradfri extends Property
         group.delScene scene
       @client.observeDevices()
     .then =>      # Need the devices in place so not Promise.all()
-      console.log 'observeDevices()'
       @client.observeGroupsAndScenes()
     .then =>
-      console.log 'observeGroupsAndScenes()'
       credentials
 
   reset: ->
