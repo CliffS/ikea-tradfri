@@ -7,7 +7,7 @@ Accessory = require './Accessory'
 Group = require './Group'
 Property = require './Property'
 
-DEBUG = true
+DEBUG = false
 
 sleep = (time = 1) ->
   new Promise (resolve, reject) ->
