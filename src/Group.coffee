@@ -9,7 +9,7 @@ class Group extends Property
     newgroup = new Group group
     if Group.groups.has newgroup.id
       grp = Group.groups.get newgroup.id
-      grp.change newgroup, group
+      grp.change newgroup # , group
       grp
     else
       Group.groups.set newgroup.id, newgroup
@@ -37,16 +37,13 @@ class Group extends Property
     @sceneId  =  group.sceneId
 
     Object.defineProperty @, 'rawGroup',
-      writable: true
       value: group
 
     Object.defineProperty @, 'groupScenes',
-      writable: true
       value: new Map
 
-  change: (newgroup, @rawGroup) ->
+  change: (newgroup) ->
     @[k] = v for own k, v of newgroup when v?
-    @groupScenes = newgroup.groupScenes
 
   addScene: (scene) ->
     scene = new Scene scene unless scene instanceof Scene
@@ -55,12 +52,12 @@ class Group extends Property
   getScene: (name) ->
     return scene for scene from @groupScenes.values() when scene.name is name
 
-  delScene: (scene) ->
-    @groupScenes.delete scene.id
+  delScene: (sceneID) ->
+    @groupScenes.delete sceneID
 
   @property 'switch',
     set: (onOff) ->
-      rawGroup.toggle onOff
+      @rawGroup.toggle onOff
       @isOn = onOff
     get: ->
       @isOn

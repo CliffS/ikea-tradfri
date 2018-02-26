@@ -7,6 +7,8 @@ Accessory = require './Accessory'
 Group = require './Group'
 Property = require './Property'
 
+DEBUG = true
+
 sleep = (time = 1) ->
   new Promise (resolve, reject) ->
     setTimeout ->
@@ -40,24 +42,29 @@ class Tradfri extends Property
         console.error err # Just log it to STDERR and carry on
       .on "device updated", (device) =>
         newdev = Accessory.update device
+        console.log "device updated: #{device.name}" if DEBUG
       .on "device removed", (device) =>
         Accessory.delete device
       .on "group updated", (group) =>
         Group.update group
+        console.log "group updated: #{group.name}" if DEBUG
       .on "group removed", (group) =>
         Group.delete group
       .on "scene updated", (groupID, scene) =>
+        console.log "scene updated: #{groupID}: #{scene.name}" if DEBUG
         group = Group.byID groupID
         throw new Error "Missing group #{groupID}" unless group
         group.addScene scene
       .on "scene removed", (groupID, scene) =>
         group = Group.byID groupID
         throw new Error "Missing group #{groupID}" unless group
-        group.delScene scene
+        group.delScene scene.instanceId
       @client.observeDevices()
     .then =>      # Need the devices in place so not Promise.all()
+      console.log "observeDevices resolved" if DEBUG
       @client.observeGroupsAndScenes()
     .then =>
+      console.log "observeGroupsAndScenes resolved" if DEBUG
       credentials
 
   reset: ->

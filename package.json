@@ -8,7 +8,7 @@
     "build": "coffee -c -o lib src",
     "watch": "coffee -c -o lib -w src &",
     "prepublishOnly": "npm run build",
-    "start": "./testrun.coffee"
+    "start": "scripts/testrun.coffee"
   },
   "repository": {
     "type": "git",
@@ -27,9 +27,9 @@
   },
   "homepage": "https://github.com/CliffS/ikea-tradfri#readme",
   "dependencies": {
-    "node-tradfri-client": "^0.5.0"
+    "node-tradfri-client": ">=0.8.4"
   },
   "devDependencies": {
-    "coffeescript": "^2.0.1"
+    "coffeescript": "^2.2.2"
   }
 }

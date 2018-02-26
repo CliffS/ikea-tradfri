@@ -26,14 +26,29 @@ tradfri.connect()
   # await sleep 3
   group = tradfri.group 'TRADFRI group 4'
   console.log group
-  await sleep 1
-  group.scene = 'test'
-  await sleep 1
+  console.log group.scenes
+  await sleep 2
+  group.scene = 'Test'
+  await sleep 5
+  console.log "Scene:", group.scene
+  group.scene = 'RELAX'
+  await sleep 5
+  console.log "Scene:", group.scene
+  group.scene = 'xyz'
+  await sleep 5
+  console.log "Scene:", group.scene
   group.level = 100
-  await sleep 1
+  await sleep 5
+  console.log "Level:", group.level
+  group.scene = 'FOCUS'
+  await sleep 5
+  console.log "Level:", group.level
   console.log group
   console.log "Scene: #{group.scene}"
-  console.log ( [scene.id, scene.name] for scene in group.scenes )
+  group.level = 50
+  await sleep 2
+  group.switch = off
+  await sleep 2
   console.log '------------------------'
   bulb = tradfri.device 'Cliff Standard Lamp'
   .on 'changed', (change) ->
@@ -51,9 +66,10 @@ tradfri.connect()
   bulb.color = 'white'
   await sleep 1
   bulb.switch = off
-  await sleep 86400
+  await sleep 20
   tradfri.reset()
 .catch (err) ->
   console.log "TESTRUN ERROR: #{err}"
+  console.error err
   process.exit 1
 
