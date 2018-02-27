@@ -51,8 +51,8 @@ class Tradfri extends Property
       .on "group removed", (group) =>
         Group.delete group
       .on "scene updated", (groupID, scene) =>
-        console.log "scene updated: #{groupID}: #{scene.name}" if DEBUG
         group = Group.byID groupID
+        console.log "scene updated: #{group.name}: #{scene.name}" if DEBUG
         throw new Error "Missing group #{groupID}" unless group
         group.addScene scene
       .on "scene removed", (groupID, scene) =>
