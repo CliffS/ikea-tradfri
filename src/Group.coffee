@@ -27,6 +27,9 @@ class Group extends Property
   @byID: (id) ->
     Group.groups.get id
 
+  @close: ->
+    @groups.clear()
+
   constructor: (group) ->
     super()
     @deleted = false
@@ -55,10 +58,16 @@ class Group extends Property
   delScene: (sceneID) ->
     @groupScenes.delete sceneID
 
+  operate: (operation) ->
+    @rawGroup.client.operateGroup @rawGroup, operation
+
   @property 'switch',
     set: (onOff) ->
+      console.log "toggle #{onOff}"
       @rawGroup.toggle onOff
-      @isOn = onOff
+      .then (ok) =>
+        console.log "OK: ", ok
+        @isOn = onOff
     get: ->
       @isOn
 
@@ -66,8 +75,9 @@ class Group extends Property
     set: (name) ->
       id = @getScene(name)?.id
       if id
-        @rawGroup.operateGroup sceneId: id
+        @rawGroup.activateScene id
         .then (ok) ->
+          console.log "OK: ", ok
           @sceneId = id if ok
         .catch (err) =>
     get: ->
@@ -79,7 +89,7 @@ class Group extends Property
 
   @property 'level',
     set: (level) ->
-      @rawGroup.operateGroup dimmer: level
+      @operate dimmer: level
       .then (ok) =>
         @dimmer = level if ok
       .catch (err) =>

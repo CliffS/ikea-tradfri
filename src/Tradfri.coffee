@@ -70,8 +70,11 @@ class Tradfri extends Property
   reset: ->
     @client.reset()
 
-  destroy: ->
+  close: ->
     @client.destroy()
+    Group.close()
+    Accessory.close()
+    delete @client
 
   device: (name) ->
     Accessory.get name

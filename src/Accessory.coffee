@@ -43,6 +43,9 @@ class Accessory extends EventEmitter
   @byID: (id) ->
     Accessory.devices.get id
 
+  @close: ->
+    @devices.clear()
+
   # This is the inherited constructor
   constructor: (device) ->
     super()
