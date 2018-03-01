@@ -44,6 +44,7 @@ tradfri.connect()
 - [Groups](#groups)
   - [Getting a Group](#getting-a-group)
   - [Group Properties](#group-properties)
+- [Other Methods](#other-methods)
 - [Issues](#issues)
 - [Licence](#licence)
 
@@ -363,6 +364,25 @@ group = tradfri.group 'Hallway'
 console.log "#{group.name} is currently set to #{group.scene}"
 group.scene = 'Romantic'
 ```
+
+## Other Methods
+### reset()
+
+```coffeescript
+tradfri.reset()
+```
+
+This can be used to reset the connection.
+
+### close()
+```coffeescript
+tradfri.close()
+```
+
+This should be called before ending the program so that the gateway
+can clean up its resources and so that the program will close its
+connections.
+
 ## Acknowlegements
 
 Many thanks to [AlCalzone] for his excellent libraries, without which
