@@ -58,6 +58,7 @@ class Accessory extends EventEmitter
     Object.defineProperty @, 'device',  # non-enumerable property
       writable: true
       value: device
+
     Object.defineProperty @, 'type',
       enumerable: true
       value: @.constructor.name

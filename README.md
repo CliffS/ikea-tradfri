@@ -182,6 +182,10 @@ powered on.
 
 These are the bulb-specific properties (read-only):
 
+- **isOn** *(boolean)*
+
+  Whether this bulb is on or off
+
 - **switchable** *(boolean)*
 
   Whether this bulb can be switched on and off
@@ -190,9 +194,23 @@ These are the bulb-specific properties (read-only):
 
   Whether this bulb can be dimmed
 
+- **brightness** *(integer percentage)*
+
+  This can be from 0 to 100.
+
 - **spectrum** *(white|rgb|none)*
 
   The light spectrum of the bulb: white, rgb or none
+
+- **colour** *(string | percentage)*
+
+  Reading the property will return "white", "warm" or "glow" if its
+  value matches one of those settings (1, 62 or 97, respectively) 
+  or it will return the current numerical value.
+
+- **color** *(string | percentage)*
+
+  An alternative spelling of colour, q.v..
 
 - **hexcolour** *(hex number)*
 
@@ -203,32 +221,23 @@ These are the bulb-specific properties (read-only):
 
   The hue and saturation of the RGB bulbs (not yet implemented).
 
-The following are the read-write properties of a Bulb:
+The following are the methods to change setings on a bulb:
 
-- **switch** *(boolean)*
+- **switch()** *(boolean)*
 
-  This is the on-off switch.  Reading it will get the state of the
-  Bulb.  Writing to it will turn the bulb on or off.
+  This is the on-off switch.  It should be sent `true` to turn
+  the bulb on or `false` to turn it off.  It will return a promise
+  resolving to `true` if the setting was changed or `false` if it
+  was not.
 
-```coffeescript
-bulb = tradfri.device 'Bulb number 1'
-console.log "#{bulb.name} is currently #{if bulb.switch then 'on' else 'off'}"
-bulb.switch = on
-```
+- **setBrightness()** *(integer percentage)*
 
-- **level** *(integer percentage)*
-
-  This can be set from 0 to 100.  Reading it will return
-  the current brightness of the Bulb.  Writing to it will change
+  This can be set from 0 to 100. It will change
   the brightness of the Bulb: 100 is fully bright, 0 will turn the bulb off.
+  This will return a promise resolving to `true` if the setting was changed or
+  `false` if it was not.
 
-```coffeescript
-bulb = tradfri.device 'Bulb number 1'
-console.log "#{bulb.name} is currently at level #{bulb.level}"
-bulb.level = 50
-```
-
-- **colour** *(white | warm | glow | integer percentage | hex number )*
+- **setColour()** *(white | warm | glow | integer percentage | hex number )*
 
   For white spectrum bulbs, this can be set to:
   * "white"
@@ -237,22 +246,14 @@ bulb.level = 50
 
   Alternatively it can be set to a number from 1 to 100 where 1 is the coolest
   colour temperature and 100 is the warmest.
-
-  Reading the property will return "white", "warm" or "glow" if its
-  value matches one of those settings (1, 62 or 97, respectively) 
-  or it will return the current numerical value.
-
-```coffeescript
-bulb = tradfri.device 'Bulb number 1'
-console.log "#{bulb.name} colour is currently #{bulb.colour}"
-bulb.colour = 'white'
-```
+  This will return a promise resolving to `true` if the setting was changed or
+  `false` if it was not.
 
   The code is not yet written for RGB bulbs.
 
-- **color**
+- **setColor**
 
-  An alternative spelling of colour, q.v..
+  An alternative spelling of setColour, q.v..
 
 ### Remote and Sensor
 
@@ -316,53 +317,59 @@ The read-only properties for a group are:
   This is the name of the group and is the usual way to access
   it in this library.
 
+- **isOn** *(boolean)*
+
+  This returns whether the controller believes this group
+  to be on or off.
+
+- **scene** *(string)*
+
+  This is the name of the current scene, if any.
+
 - **scenes** *(Array of strings)*
 
   This will return an array of Scene class objects which are
   available to this group.
 
+- **level** *(integer percentage)*
+
+  Reading this will return the last group value applied.
+
 ```coffeescript
 group = tradfri.group 'Hallway'
 console.log "#{group.name} has the following scenes:"
-console.log scene for scene in group.scenes
+console.log (scene for scene in group.scenes)
 ```
 
-The writable properties are as follows:
+The methods are as follows.  Each of these methods returns
+a promise that resolves to a boolean.  If true, the change was
+made, if false nothing was changed.
 
-- **switch** *(boolean)*
+- **switch()** *(boolean)*
 
   Setting this to on (true) will turn on all the bulbs in the
   group.  Setting it to off (false) will turn them off.
-  Reading this will give the current group value which may or
-  may not reflect the state of the bulbs.
 
-```coffeescript
-group = tradfri.group 'Hallway'
-console.log "#{group.name} is currently #{if group.switch then 'on' else 'off'}"
-group.switch = on
-```
-
-- **level** *(integer percentage)*
+- **setLevel()** *(integer percentage)*
 
   Setting this will set all bulbs in the group to the required level.
-  Reading it will return the last group value applied.
 
 ```coffeescript
 group = tradfri.group 'Hallway'
 console.log "#{group.name} is currently at level #{group.level}"
-group.level - 50
+group.level 50
+console.log "#{group.name} is now at level #{group.level}"
 ```
 
-- **scene** *(string)*
+- **setScene()** *(string)*
 
-  Reading this will return the name of the currently set scene, if any.
-  Setting this property will set the scene for the group, so long
+  This will set the scene for the group, so long
   as the name matches one of the scenes from the group.
 
 ```coffeescript
 group = tradfri.group 'Hallway'
 console.log "#{group.name} is currently set to #{group.scene}"
-group.scene = 'Romantic'
+group.setScene 'Romantic'
 ```
 
 ## Other Methods
@@ -381,7 +388,8 @@ tradfri.close()
 
 This should be called before ending the program so that the gateway
 can clean up its resources and so that the program will close its
-connections.
+connections. not that it may take a few seconds for the program to
+end as there may be timers still running.
 
 ## Acknowlegements
 

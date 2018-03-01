@@ -20,17 +20,21 @@ tradfri.connect()
   console.log '------------------------------------'
   groups = [
     tradfri.group 'Living Room'
-    # tradfri.group 'Hallway'
+    tradfri.group 'Hallway'
   ]
   console.log groups
   console.log ( group.scenes for group in groups )
-  # group.switch = on for group in groups
-  group.scene = 'FOCUS' for group in groups
   console.log ( group.scene for group in groups )
+  await group.setScene 'FOCUS' for group in groups
+  console.log ( group.scene for group in groups )
+  console.log 'Sleeping...', new Date().toTimeString()
+  await sleep 30
+  await group.switch off for group in groups
+  console.log 'Slept', new Date().toTimeString()
+  console.log groups
 .catch (err) ->
   console.log err
 .finally ->
-  await sleep 10
   console.log 'Closing...'
   tradfri.close()
   process.exit()

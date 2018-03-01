@@ -61,25 +61,22 @@ class Group extends Property
   operate: (operation) ->
     @rawGroup.client.operateGroup @rawGroup, operation
 
-  @property 'switch',
-    set: (onOff) ->
-      console.log "toggle #{onOff}"
-      @rawGroup.toggle onOff
+  switch: (onOff) ->
+    console.log "toggle #{onOff}"
+    @rawGroup.toggle onOff
+    .then (ok) =>
+      @isOn = onOff
+
+  setScene: (name) ->
+    id = @getScene(name)?.id
+    if id
+      @rawGroup.activateScene id
       .then (ok) =>
-        console.log "OK: ", ok
-        @isOn = onOff
-    get: ->
-      @isOn
+        @sceneId = id
+    else
+      Promise.reject new Error "Can't find scene #{name} in #{@name}"
 
   @property 'scene',
-    set: (name) ->
-      id = @getScene(name)?.id
-      if id
-        @rawGroup.activateScene id
-        .then (ok) ->
-          console.log "OK: ", ok
-          @sceneId = id if ok
-        .catch (err) =>
     get: ->
       @groupScenes.get(@sceneId)?.name
 
@@ -87,12 +84,12 @@ class Group extends Property
     get: ->
       Array.from(@groupScenes.values()).map (value) => value.name
 
+  setLevel: (level) ->
+    @rawGroup.setBrightness level
+    .then (ok) =>
+      @dimmer = level
+
   @property 'level',
-    set: (level) ->
-      @operate dimmer: level
-      .then (ok) =>
-        @dimmer = level if ok
-      .catch (err) =>
     get: ->
       @dimmer
 

@@ -24,54 +24,50 @@ class Bulb extends Accessory
     tradfri = @device.client
     await tradfri.operateLight @device, obj
 
-  @property "switch",
-    set: (onOff) ->
-      @operate onOff: onOff
-      .then (ok) =>
-        @ison = onOff if ok
-      .catch (err) =>
-    get: ->
-      @isOn
+  switch: (onOff) ->
+    @operate onOff: onOff
+    .then (ok) =>
+      @ison = onOff
+      ok
 
-  @property "level",
-    set: (level) ->
-      @operate dimmer: level
-      .then (ok) =>
-        @brightness = level if ok
-      .catch (err) =>
-    get: ->
-      @brightness
+  setBrighness: (level) ->
+    @operate dimmer: level
+    .then (ok) =>
+      @brightness = level
+      ok
 
   colours =
     white: 'f5faf6'
     warm:  'f1e0b5'
     glow:  'efd275'
       
+  setColour: (colour) ->
+    switch @spectrum
+      when 'white'    # cold/warm bulbs
+        switch colour
+          when 'white'
+            temp = 1
+          when 'warm', 'warm white'
+            temp = 62
+          when 'glow', 'warm glow'
+            temp = 97
+          else
+            temp = parseInt colour
+            throw new Error "Unknown colour of #{colour}" unless 0 <= temp <= 100   # 0 to 100 inclusive
+        @operate colorTemperature: temp
+        .then (ok) =>
+          @temperature = temp
+          ok
+      when 'rgb'
+        throw new Error 'Not written yet'
+      when 'none' # do nothing
+      else
+        throw new Error "Unknown bulb spectrum: #{@spectrum}"
+
+  setColor: (colour) ->
+    @setColour colour
+
   @property "colour",
-    set: (colour) ->
-      switch @spectrum
-        when 'white'    # cold/warm bulbs
-          switch colour
-            when 'white'
-              temp = 1
-            when 'warm', 'warm white'
-              temp = 62
-            when 'glow', 'warm glow'
-              temp = 97
-            else
-              temp = parseInt colour
-              throw new Error "Unknown colour of #{colour}" unless 0 <= temp <= 100   # 0 to 100 inclusive
-          @operate
-            colorTemperature: temp
-          .then (ok) =>
-            @temperature = temp if ok
-          .catch (err) =>
-        when 'rgb'
-          throw new Error 'Not written yet'
-        when 'none'
-          # do nothing
-        else
-          throw new Error "Unknown bulb spectrum: #{@spectrum}"
     get: ->
       switch @spectrum
         when 'white'
@@ -88,8 +84,6 @@ class Bulb extends Accessory
           return @hexcolour
 
   @property 'color',
-    set: (color) ->
-      @colour = color
     get: ->
       @colour
 
