@@ -388,8 +388,8 @@ tradfri.close()
 
 This should be called before ending the program so that the gateway
 can clean up its resources and so that the program will close its
-connections. not that it may take a few seconds for the program to
-end as there may be timers still running.
+connections. Note that it may nevertheless take a few seconds for
+the program to end as there may be timers still running.
 
 ## Acknowlegements
 
