@@ -61,7 +61,7 @@ typings/
 .*.sw?
 
 # compiled output
-lib/
+# lib/
 
 # secrets
 identity.json
