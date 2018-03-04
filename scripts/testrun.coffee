@@ -18,6 +18,8 @@ tradfri.connect()
 .then (credentials) ->
   console.log "Credentials: ", credentials
   console.log '------------------------------------'
+
+###
   groups = [
     tradfri.group 'Living Room'
     tradfri.group 'Hallway'
@@ -39,3 +41,7 @@ tradfri.connect()
   tradfri.close()
   process.exit()
   # WTF.dump()
+###
+
+  bulb = tradfri.device 'Sylvia Standard Lamp'
+  console.log bulb

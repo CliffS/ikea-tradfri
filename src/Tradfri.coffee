@@ -9,6 +9,11 @@ Property = require './Property'
 
 DEBUG = false
 
+States = Object.freeze
+  DISCONNECTED: Symbol 'disconnected'
+  CONNECTING:   Symbol 'connecting'
+  CONNECTED:    Symbol 'connected'
+
 sleep = (time = 1) ->
   new Promise (resolve, reject) ->
     setTimeout ->
@@ -23,6 +28,8 @@ class Tradfri extends Property
     super()
     @client = new Client @hub
 
+  connectState: States.DISCONNECTED
+
   connect: ->
     credentials = undefined
     (
@@ -35,37 +42,46 @@ class Tradfri extends Property
     )
     .then (result) =>
       credentials = result
-      @client.connect result.identity, result.psk
-    .then (ans) =>
-      throw new Error "Failed to connect" unless ans
-      @client.on 'error', (err) =>
-        console.error err # Just log it to STDERR and carry on
-      .on "device updated", (device) =>
-        newdev = Accessory.update device
-        console.log "device updated: #{device.name}" if DEBUG
-      .on "device removed", (device) =>
-        Accessory.delete device
-      .on "group updated", (group) =>
-        Group.update group
-        console.log "group updated: #{group.name}" if DEBUG
-      .on "group removed", (group) =>
-        Group.delete group
-      .on "scene updated", (groupID, scene) =>
-        group = Group.byID groupID
-        console.log "scene updated: #{group.name}: #{scene.name}" if DEBUG
-        throw new Error "Missing group #{groupID}" unless group
-        group.addScene scene
-      .on "scene removed", (groupID, scene) =>
-        group = Group.byID groupID
-        throw new Error "Missing group #{groupID}" unless group
-        group.delScene scene.instanceId
-      @client.observeDevices()
-    .then =>      # Need the devices in place so not Promise.all()
-      console.log "observeDevices resolved" if DEBUG
-      @client.observeGroupsAndScenes()
-    .then =>
-      console.log "observeGroupsAndScenes resolved" if DEBUG
-      credentials
+      switch @connectState
+        when States.DISCONNECTED
+          @connectState = States.CONNECTING
+          @client.connect result.identity, result.psk
+          .then (ans) =>
+            throw new Error "Failed to connect" unless ans
+            @client.on 'error', (err) =>
+              console.error err # Just log it to STDERR and carry on
+            .on "device updated", (device) =>
+              newdev = Accessory.update device
+              console.log "device updated: #{device.name}" if DEBUG
+            .on "device removed", (device) =>
+              Accessory.delete device
+            .on "group updated", (group) =>
+              Group.update group
+              console.log "group updated: #{group.name}" if DEBUG
+            .on "group removed", (group) =>
+              Group.delete group
+            .on "scene updated", (groupID, scene) =>
+              group = Group.byID groupID
+              console.log "scene updated: #{group.name}: #{scene.name}" if DEBUG
+              throw new Error "Missing group #{groupID}" unless group
+              group.addScene scene
+            .on "scene removed", (groupID, scene) =>
+              group = Group.byID groupID
+              throw new Error "Missing group #{groupID}" unless group
+              group.delScene scene.instanceId
+            @client.observeDevices()
+          .then =>      # Need the devices in place so not Promise.all()
+            console.log "observeDevices resolved" if DEBUG
+            @client.observeGroupsAndScenes()
+          .then =>
+            console.log "observeGroupsAndScenes resolved" if DEBUG
+            @connectState = States.CONNECTED
+            credentials
+        when States.CONNECTING
+          await sleep .25 until @connectState is States.CONNECTED
+          credentials
+        when States.CONNECTED
+          credentials
 
   reset: ->
     @client.reset()
