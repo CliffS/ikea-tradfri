@@ -62,7 +62,6 @@ class Group extends Property
     @rawGroup.client.operateGroup @rawGroup, operation
 
   switch: (onOff) ->
-    console.log "toggle #{onOff}"
     @rawGroup.toggle onOff
     .then (ok) =>
       @isOn = onOff
