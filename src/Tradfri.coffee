@@ -7,7 +7,7 @@ Accessory = require './Accessory'
 Group = require './Group'
 Property = require './Property'
 
-DEBUG = false
+DEBUG = true
 
 States = Object.freeze
   DISCONNECTED: Symbol 'disconnected'
@@ -45,6 +45,7 @@ class Tradfri extends Property
       switch @connectState
         when States.DISCONNECTED
           @connectState = States.CONNECTING
+          @client.removeAllListeners()
           @client.connect result.identity, result.psk
           .then (ans) =>
             throw new Error "Failed to connect" unless ans
@@ -79,12 +80,26 @@ class Tradfri extends Property
             credentials
         when States.CONNECTING
           await sleep .25 until @connectState is States.CONNECTED
-          credentials
-        when States.CONNECTED
-          credentials
+    .finally =>
+      pingcount = 0
+      interval = setInterval =>
+        pingcount = if await @client.ping then 0 else pingcount + 1
+        console.log "Pingcount = #{pingcount}" if pingcount
+        if pingcount > 3
+          clearInterval interval
+          await @reset()
+      , 3000
+      interval.unref()
+      credentials
+
 
   reset: ->
-    @client.reset()
+    Promise.resolve()
+    .then =>
+      @client.reset()
+      @connectState = States.DISCONNECTED
+    .then =>
+      @connect()
 
   close: ->
     @client.destroy()
