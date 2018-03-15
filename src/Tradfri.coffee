@@ -1,4 +1,5 @@
 NodeTradfri = require 'node-tradfri-client'
+require('promise.prototype.finally').shim()
 
 Client = NodeTradfri.TradfriClient
 Types  = NodeTradfri.AccessoryTypes
