@@ -18,30 +18,30 @@ class Accessory extends EventEmitter
         item = new Sensor device
       else
         throw new Error "Unknown type: #{device.type}"
-    if Accessory.devices.has item.id
+    if @devices.has item.id
       dev = @devices.get item.id
       dev.change item
-      @device = device
+      dev.device = device
       dev
     else
-      Accessory.devices.set item.id, item
+      @devices.set item.id, item
       item
 
   @delete: (device) ->
-    deleted = Accessory.devices.get device.instanceId
+    deleted = @devices.get device.instanceId
     if deleted?
-      Accessory.devices.delete device.instanceId
+      @devices.delete device.instanceId
       deleted.delete()
 
   @get: (name) ->
-    vals = Accessory.devices.values()
+    vals = @devices.values()
     if Array.isArray name
       item for item from vals when item.name in name
     else
       return item for item from vals when item.name is name
 
   @byID: (id) ->
-    Accessory.devices.get id
+    @devices.get id
 
   @close: ->
     @devices.clear()
