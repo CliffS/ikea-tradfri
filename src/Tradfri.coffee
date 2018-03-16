@@ -8,7 +8,7 @@ Accessory = require './Accessory'
 Group = require './Group'
 Property = require './Property'
 
-DEBUG = true
+DEBUG = false
 
 States = Object.freeze
   DISCONNECTED: Symbol 'disconnected'
