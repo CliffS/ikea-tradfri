@@ -281,19 +281,21 @@ device.on "deleted", (name) ->
 
 - **changed**
 
-  This is emitted with an object describing the change, whenever a
-  device is changed.  The object will have two
-  keys: 
-  
-  * name    - the name of the device
-  * changed - an object containing one or more attributes as keys,
-    where each value is an object containing `old` and `new`, describing
-    the change.
+  [**NOTE** The format for the changed event since v3.0.0 is
+  different and incompatible with previous versions]
+
+  This is emitted with two objects describing the change, whenever a
+  device is changed.  Each object will have a `name` key and one
+  or more attribute keys: 
+
+  The first object is the new state of the device, the second object
+  is the previous state.
 
 ```coffeescript
-bulb.on changed, (changes) ->
-  console.log "bulb.#{changes.name} has changed:"
-  console.log "  #{k} was #{v.old}, now #{v.new}" for k, v of changes.changed
+bulb.on changed, (current, previous) ->
+  console.log "bulb.#{current.name} has changed:"
+  for key, val of current when key isnt 'name'
+    console.log "  #{key} was #{previous[key]}, now #{current[key]}"
 ```
 ## Groups
 
