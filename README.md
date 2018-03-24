@@ -122,6 +122,10 @@ catch err
   process.exit 1
 ```
 
+There is a third parameter to `new Tradfri`.  This is a boolean
+`debug`, defaultng to `false`.  If set to `true`, there will be logging
+to `stdout` when devices etc. are updated.
+
 All example code below assumes you have the `tradftri` variable above.
 
 ## Devices
