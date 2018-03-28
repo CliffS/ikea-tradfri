@@ -89,6 +89,11 @@ the promise to resolve before continuing.  This can be done
 with a `.then()` or by `await`ing the result.  Either way you
 should `catch` any error.
 
+It is safe to call `tradfri.connect()` multiple times or simultaneously
+on the same instance.
+The first call will perform the actual connect; subsequent calls will
+resolve when the connect is completed.
+
 ### First time
 
   The first time you connect, you should use the code from the bottom
