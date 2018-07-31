@@ -76,7 +76,8 @@ class Tradfri extends Property
           .then =>
             console.log "observeGroupsAndScenes resolved" if @debug
             @connectState = States.CONNECTED
-            credentials
+            credentials: credentials
+            devices: Accessory.devices
         when States.CONNECTING
           await sleep .25 until @connectState is States.CONNECTED
     .finally =>
