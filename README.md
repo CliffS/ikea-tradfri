@@ -44,7 +44,7 @@ tradfri.connect()
 - [Groups](#groups)
   - [Getting a Group](#getting-a-group)
   - [Group Properties](#group-properties)
-- [Other Methods](#other-methods)
+- [Other Methods and Properties](#other-methods-and-properties)
 - [Issues](#issues)
 - [Licence](#licence)
 
@@ -383,7 +383,7 @@ console.log "#{group.name} is currently set to #{group.scene}"
 group.setScene 'Romantic'
 ```
 
-## Other Methods
+## Other Methods and Properties
 ### reset()
 
 ```coffeescript
@@ -401,6 +401,14 @@ This should be called before ending the program so that the gateway
 can clean up its resources and so that the program will close its
 connections. Note that it may nevertheless take a few seconds for
 the program to end as there may be timers still running.
+
+### devices
+```coffeescript
+devices = tradfri.devices
+```
+
+This will return an array of all the devices that have been
+detected.
 
 ## Acknowlegements
 
