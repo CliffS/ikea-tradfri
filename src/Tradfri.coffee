@@ -25,7 +25,8 @@ class Tradfri extends Property
   # or an object containing the keys: identity & psk
   constructor: (@hub, @securityId, @debug = false) ->
     super()
-    @client = new Client @hub
+    @client = new Client @hub,
+      watchConnection: true
 
   connectState: States.DISCONNECTED
 
@@ -80,15 +81,6 @@ class Tradfri extends Property
         when States.CONNECTING
           await sleep .25 until @connectState is States.CONNECTED
     .finally =>
-      pingcount = 0
-      interval = setInterval =>
-        pingcount = if await @client.ping then 0 else pingcount + 1
-        console.log "Pingcount = #{pingcount}" if pingcount
-        if pingcount > 3
-          clearInterval interval
-          await @reset()
-      , 3000
-      interval.unref()
       credentials
 
 
@@ -105,6 +97,10 @@ class Tradfri extends Property
     Group.close()
     Accessory.close()
     delete @client
+
+  @property 'devices',
+    get: ->
+      Accessory.listDevices()
 
   device: (name) ->
     Accessory.get name
