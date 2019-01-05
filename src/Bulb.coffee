@@ -30,7 +30,7 @@ class Bulb extends Accessory
       @ison = onOff
       ok
 
-  setBrighness: (level) ->
+  setBrightness: (level) ->
     @operate dimmer: level
     .then (ok) =>
       @brightness = level
