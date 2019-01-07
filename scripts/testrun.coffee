@@ -12,7 +12,7 @@ sleep = (time = 10) ->
   new Promise (resolve, reject) ->
     setTimeout resolve, time * 1000
 
-tradfri = new Tradfri 'tradfri.tallinn.may.be', Identity #.id
+tradfri = new Tradfri 'tradfri.tallinn.may.be', Identity, true
 
 tradfri.connect()
 .then (credentials) ->

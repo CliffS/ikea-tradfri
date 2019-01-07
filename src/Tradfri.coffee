@@ -26,7 +26,7 @@ class Tradfri extends Property
   constructor: (@hub, @securityId, @debug = false) ->
     super()
     @client = new Client @hub,
-      watchConnection: true
+      #watchConnection: true
 
   connectState: States.DISCONNECTED
 
