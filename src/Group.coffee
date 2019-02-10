@@ -30,6 +30,9 @@ class Group extends Property
   @close: ->
     @groups.clear()
 
+  @listGroups: ->
+    ( group for group from Group.groups.values() )
+
   constructor: (group) ->
     super()
     @deleted = false

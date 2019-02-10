@@ -102,6 +102,10 @@ class Tradfri extends Property
     get: ->
       Accessory.listDevices()
 
+  @property 'groups',
+    get: ->
+      Group.listGroups()
+
   device: (name) ->
     Accessory.get name
 
