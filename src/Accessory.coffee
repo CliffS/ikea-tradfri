@@ -16,6 +16,8 @@ class Accessory extends EventEmitter
         item = new Remote device
       when 'motionSensor'
         item = new Sensor device
+      when 'plug'
+        item = new Plug device
       else
         throw new Error "Unknown type: #{device.type}"
     if @devices.has item.id
@@ -86,4 +88,5 @@ module.exports = Accessory
 Bulb    =  require  './Bulb'
 Remote  =  require  './Remote'
 Sensor  =  require  './Sensor'
+Plug  =  require  './Plug'
 
