@@ -135,10 +135,11 @@ All example code below assumes you have the `tradftri` variable above.
 
 ## Devices
 
-There are currently three types of device:
+There are currently four types of device:
 
 <dl>
 <dt>Bulb</dt><dd>A lightbulb, panel etc.</dd>
+<dt>Plug</dt><dd>A wall plug, panel etc.</dd>
 <dt>Remote</dt><dd>A remote control device</dd>
 <dt>Sensor</dt><dd>A movement sensor</dd>
 </dl>
@@ -146,7 +147,8 @@ There are currently three types of device:
 For this library to work correctly, each device and group should be
 distinctly named as the library works exclusively from those names.
 
-The Trådfri controller only permits Bulbs to be tracked.  There seems
+The Trådfri controller only permits Bulbs nad Plugs
+to be tracked.  There seems
 to be no way to know when a Remote has been activated, other than 
 by tracking a connected Bulb.
 
@@ -230,7 +232,7 @@ These are the bulb-specific properties (read-only):
 
   The hue and saturation of the RGB bulbs (not yet implemented).
 
-The following are the methods to change setings on a bulb:
+The following are the methods to change settings on a bulb:
 
 - **switch()** *(boolean)*
 
@@ -263,6 +265,25 @@ The following are the methods to change setings on a bulb:
 - **setColor**
 
   An alternative spelling of setColour, q.v..
+
+### Plug
+
+These are the plug-specific properties (read-only):
+
+- **isOn** *(boolean)*
+
+  Whether this plug is on or off
+
+- **switchable** *(boolean)*
+
+  Whether this plug can be switched on and off
+
+- **switch()** *(boolean)*
+
+  This is the on-off switch.  It should be sent `true` to turn
+  the plug on or `false` to turn it off.  It will return a promise
+  resolving to `true` if the setting was changed or `false` if it
+  was not.
 
 ### Remote and Sensor
 
