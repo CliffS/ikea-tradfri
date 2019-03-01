@@ -1,6 +1,6 @@
 {
   "name": "ikea-tradfri",
-  "version": "3.6.0",
+  "version": "3.7.0",
   "description": "A library to access the Ikea Trådfri lighting system without needing to call a separate binary",
   "main": "lib/Tradfri.js",
   "scripts": {
