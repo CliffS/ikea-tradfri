@@ -9,17 +9,18 @@ class Accessory extends EventEmitter
   # but should be created here
   @update: (device) ->
     type = Types[device.type]
-    switch type
+    item = switch type
       when 'lightbulb'
-        item = new Bulb device
+        new Bulb device
       when 'remote'
-        item = new Remote device
+        new Remote device
       when 'motionSensor'
-        item = new Sensor device
+        new Sensor device
       when 'plug'
-        item = new Plug device
+        new Plug device
       else
-        throw new Error "Unknown type: #{device.type}"
+        # It's an unknown device: return a generic Accessory
+        new Accessory device
     if @devices.has item.id
       dev = @devices.get item.id
       dev.change item
