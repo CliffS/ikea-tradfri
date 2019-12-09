@@ -3,6 +3,8 @@ require('promise.prototype.finally').shim()
 
 Client = NodeTradfri.TradfriClient
 Types  = NodeTradfri.AccessoryTypes
+console.log Types
+process.exit 1
 
 Accessory = require './Accessory'
 Group = require './Group'
@@ -53,7 +55,7 @@ class Tradfri extends Property
               console.error err # Just log it to STDERR and carry on
             .on "device updated", (device) =>
               newdev = Accessory.update device
-              console.log "device updated: #{device.name} (type=#{device.type})" if @debug
+              console.log "device updated: #{device.name} (type=#{device.type} [#{newdev.type}])" if @debug
             .on "device removed", (device) =>
               Accessory.delete device
             .on "group updated", (group) =>

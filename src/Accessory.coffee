@@ -14,10 +14,16 @@ class Accessory extends EventEmitter
         new Bulb device
       when 'remote'
         new Remote device
+      when 'slaveRemote'
+        new SlaveRemote device
       when 'motionSensor'
         new Sensor device
       when 'plug'
         new Plug device
+      when 'signalRepeater'
+        new Repeater device
+      when 'blind'
+        new Blind device
       else
         # It's an unknown device: return a generic Accessory
         new Accessory device
@@ -67,7 +73,7 @@ class Accessory extends EventEmitter
 
     Object.defineProperty @, 'type',
       enumerable: true
-      value: @.constructor.name
+      value: @constructor.name
 
   change: (newer) ->
     was = name: @name
@@ -86,8 +92,10 @@ class Accessory extends EventEmitter
 
 module.exports = Accessory
 
-Bulb    =  require  './Bulb'
-Remote  =  require  './Remote'
-Sensor  =  require  './Sensor'
-Plug  =  require  './Plug'
-
+Bulb        =  require  './Bulb'
+Remote      =  require  './Remote'
+Sensor      =  require  './Sensor'
+Plug        =  require  './Plug'
+Blind       =  require  './Blind'
+SlaveRemote =  require  './SlaveRemote'
+Repeater    =  require  './Repeater'

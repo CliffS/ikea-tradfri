@@ -13,13 +13,13 @@ class Plug extends Accessory
     @switchable   =  plug.isSwitchable
 
   operate: (obj) ->
-    tradfri = @device.client
-    await tradfri.operatePlug @device, obj
+    if @switchable
+      tradfri = @device.client
+      await tradfri.operatePlug @device, obj
 
   switch: (onOff) ->
     @operate onOff: onOff
     .then (ok) =>
-      @ison = onOff
       ok
 
 module.exports = Plug

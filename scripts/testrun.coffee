@@ -12,31 +12,34 @@ sleep = (time = 10) ->
   new Promise (resolve, reject) ->
     setTimeout resolve, time * 1000
 
-tradfri = new Tradfri 'tradfri.tallinn.may.be', Identity, true
+# Identity = "hOPupErDoLDw7gDe"
+tradfri = new Tradfri 'tradfri.tallinn.may.be', Identity #, true
 
 tradfri.connect()
 .then (credentials) ->
-  console.log "Credentials: ", credentials
+  credentials.id = Identity.id ? Identity
+  console.log "Credentials: ", JSON.stringify credentials, null, 2
   console.log '------------------------------------'
-  bulb = tradfri.device 'Sylvia Standard Lamp'
-  bulb.on 'changed', (change) =>
-    console.log change
-  await bulb.switch off
-  groups = [
-    tradfri.group 'Living Room'
-    tradfri.group 'Hallway'
-  ]
-  console.log groups
-  await tradfri.reset()
-  console.log "reset called"
-  console.log "switching on #{bulb.name}"
-  await bulb.switch on
+  # await tradfri.reset()
+  # console.log "reset called"
+  plug = tradfri.device 'Socket 1'
+  plug.on 'changed', (state) =>
+    console.log "Plug is now #{if state.isOn then 'on' else 'off'}"
+  console.log 'Switching on'
+  await plug.switch on
   await sleep 10
-  await tradfri.reset()
-  console.log "reset called"
-  console.log "switching off #{bulb.name}"
-  await bulb.switch off
-  await sleep 10 * 60
+  console.log 'Switching off'
+  await plug.switch off
+  await sleep 10
+  blind = tradfri.device 'Bedroom Blind'
+  blind.on 'changed', (state, was) =>
+    console.log 'STATE', state, was
+  pos = if blind.position is 100 then 27 else 100
+  console.log "Starting blind moving towards #{pos}"
+  await blind.setPosition pos
+  await sleep 10
+  console.log "Position: #{blind.position}"
+  await sleep 30
   ###
   console.log ( group.scenes for group in groups )
   console.log ( group.scene for group in groups )
