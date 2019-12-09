@@ -39,6 +39,8 @@ tradfri.connect()
   - [Getting a Device](#getting-a-device)
   - [Device Properties](#device-properties)
   - [Bulb](#bulb)
+  - [Plug](#plug)
+  - [Blind](#blind)
   - [Remote and Sensor](#remote-and-sensor)
   - [Events](#events)
 - [Groups](#groups)
@@ -135,22 +137,25 @@ All example code below assumes you have the `tradftri` variable above.
 
 ## Devices
 
-There are currently four types of device:
+There are currently seven types of device:
 
 <dl>
 <dt>Bulb</dt><dd>A lightbulb, panel etc.</dd>
-<dt>Plug</dt><dd>A wall plug, panel etc.</dd>
+<dt>Plug</dt><dd>A switchable wall plug</dd>
+<dt>Blind</dt><dd>A roller blind</dd>
 <dt>Remote</dt><dd>A remote control device</dd>
+<dt>SlaveRemote</dt><dd>A remote control device, slaved to another</dd>
 <dt>Sensor</dt><dd>A movement sensor</dd>
+<dt>Repeater</dt><dd>A signal repeater</dd>
 </dl>
 
 For this library to work correctly, each device and group should be
 distinctly named as the library works exclusively from those names.
 
-The Trådfri controller only permits Bulbs nad Plugs
+The Trådfri controller only permits Bulbs, Plugs and Blinds
 to be tracked.  There seems
 to be no way to know when a Remote has been activated, other than 
-by tracking a connected Bulb.
+by tracking a connected device.
 
 ### Getting a Device
 
@@ -278,12 +283,37 @@ These are the plug-specific properties (read-only):
 
   Whether this plug can be switched on and off
 
+The following is the method to change settings on a plug:
+
 - **switch()** *(boolean)*
 
   This is the on-off switch.  It should be sent `true` to turn
   the plug on or `false` to turn it off.  It will return a promise
   resolving to `true` if the setting was changed or `false` if it
   was not.
+
+### Blind
+
+These are the blind-specific properties (read-only):
+
+- **position** *(integer)*
+
+  This is the current position of the blind, where 100 is
+  fully open (up) and 0 is fully closed (down).
+
+The following are the methods to change positions on a blind:
+
+- **open** *(void)*
+
+  This will fully open the blind.
+
+- **close** *(void)*
+
+  This will fully close the blind.
+
+- **SetPosition** *(integer)*
+
+  This will set the blind to any position between 0 and 100.
 
 ### Remote and Sensor
 
@@ -294,7 +324,7 @@ a lack of reporting by the Trådfri controller.
 
 ### Events
 
-All three device types are event emitters although Remotes and
+All device types are event emitters although Remotes and
 Sensors do not seem to emit events when they are triggered.
 
 Currently only two events are emitted:
@@ -327,6 +357,11 @@ bulb.on changed, (current, previous) ->
   for key, val of current when key isnt 'name'
     console.log "  #{key} was #{previous[key]}, now #{current[key]}"
 ```
+
+  Note that blinds emit changes continually as they move.  You can test
+  that a blind has stopped moving when the `current.position` is equal
+  to the requested position.
+
 ## Groups
 
 ### Getting a Group
@@ -447,5 +482,5 @@ Please report all issues via the [Github issues page][issues].
 
 This library is currently offered under version 3 of the
 [GNU Lesser General Public Licence][glpl].  If you need a different
-licence, please [contact me](mailto:clif@may.be).
+licence, please [contact me](mailto:cliff@may.be).
 
