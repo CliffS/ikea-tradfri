@@ -23,6 +23,14 @@ class Blind extends Accessory
   close: ->
     @operate position: 0
 
+  @property 'isOpen',
+    get: ->
+      @position is 100
+
+  @property 'isClosed',
+    get:  ->
+      @position is 0
+
   setPosition: (pos) ->
     @operate position: pos
 

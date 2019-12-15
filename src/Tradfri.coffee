@@ -3,8 +3,6 @@ require('promise.prototype.finally').shim()
 
 Client = NodeTradfri.TradfriClient
 Types  = NodeTradfri.AccessoryTypes
-console.log Types
-process.exit 1
 
 Accessory = require './Accessory'
 Group = require './Group'
