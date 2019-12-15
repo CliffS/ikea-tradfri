@@ -301,6 +301,14 @@ These are the blind-specific properties (read-only):
   This is the current position of the blind, where 100 is
   fully open (up) and 0 is fully closed (down).
 
+  **isOpen** *(boolean)*
+
+  This is true if the blind is fully open.
+
+  **isClosed** *(boolean)*
+
+  This is true if the blind is fully closed.
+
 The following are the methods to change positions on a blind:
 
 - **open** *(void)*
