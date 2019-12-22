@@ -16,11 +16,11 @@ class Group extends Property
       Group.groups.set newgroup.id, newgroup
       newgroup
 
-  @delete: (group) ->
-    deleted = Group.groups.get group.instanceId
+  @delete: (instanceId) ->
+    deleted = Group.groups.get instanceId
     if deleted?
       Group.groups.delete group.instanceId
-      deleted.delete()
+    deleted
 
   @get: (name) ->
     return group for group from Group.groups.values() when group.name is name
@@ -32,7 +32,7 @@ class Group extends Property
     @groups.clear()
 
   @listGroups: ->
-    ( group for group from Group.groups.values() )
+    group for group from Group.groups.values()
 
   constructor: (group) ->
     super()

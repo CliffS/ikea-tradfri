@@ -1,34 +1,28 @@
 NodeTradfri = require 'node-tradfri-client'
 require('promise.prototype.finally').shim()
 
-Client = NodeTradfri.TradfriClient
-Types  = NodeTradfri.AccessoryTypes
+Client              = NodeTradfri.TradfriClient
+Types               = NodeTradfri.AccessoryTypes
+TradfriError        = NodeTradfri.TradfriError
+TradfriErrorCodes   = NodeTradfri.TradfriErrorCodes
 
 Accessory = require './Accessory'
-Group = require './Group'
-Property = require './Property'
+Group     = require './Group'
+Property  = require './Property'
 
-States = Object.freeze
-  DISCONNECTED: Symbol 'disconnected'
-  CONNECTING:   Symbol 'connecting'
-  CONNECTED:    Symbol 'connected'
-
-sleep = (time = 1) ->
-  new Promise (resolve, reject) ->
-    setTimeout ->
-      resolve()
-    , time * 1000
+Debug = require 'debug'
 
 class Tradfri extends Property
 
   # This should be called with either a securityId string
   # or an object containing the keys: identity & psk
-  constructor: (@hub, @securityId, @debug = false) ->
+  constructor: (@hub, @securityId, customLogger) ->
     super()
-    @client = new Client @hub,
+    @debug = customLogger ? Debug 'ikea-tradfri'
+    params =
       watchConnection: true
-
-  connectState: States.DISCONNECTED
+    params.customLogger = customLogger if customLogger
+    @client = new Client @hub, params
 
   connect: ->
     credentials = undefined
@@ -42,53 +36,68 @@ class Tradfri extends Property
     )
     .then (result) =>
       credentials = result
-      switch @connectState
-        when States.DISCONNECTED
-          @connectState = States.CONNECTING
-          @client.removeAllListeners()
-          @client.connect result.identity, result.psk
-          .then (ans) =>
-            throw new Error "Failed to connect" unless ans
-            @client.on 'error', (err) =>
-              console.error err # Just log it to STDERR and carry on
-            .on "device updated", (device) =>
-              newdev = Accessory.update device
-              console.log "device updated: #{device.name} (type=#{device.type} [#{newdev.type}])" if @debug
-            .on "device removed", (device) =>
-              Accessory.delete device
-            .on "group updated", (group) =>
-              Group.update group
-              console.log "group updated: #{group.name}" if @debug
-            .on "group removed", (group) =>
-              Group.delete group
-            .on "scene updated", (groupID, scene) =>
-              group = Group.byID groupID
-              console.log "scene updated: #{group.name}: #{scene.name}" if @debug
-              throw new Error "Missing group #{groupID}" unless group
-              group.addScene scene
-            .on "scene removed", (groupID, scene) =>
-              group = Group.byID groupID
-              throw new Error "Missing group #{groupID}" unless group
-              group.delScene scene.instanceId
-            @client.observeDevices()
-          .then =>      # Need the devices in place so not Promise.all()
-            console.log "observeDevices resolved" if @debug
-            @client.observeGroupsAndScenes()
-          .then =>
-            console.log "observeGroupsAndScenes resolved" if @debug
-            @connectState = States.CONNECTED
-            credentials
-        when States.CONNECTING
-          await sleep .25 until @connectState is States.CONNECTED
+      @client.removeAllListeners()
+      @client.connect result.identity, result.psk
+    .then (ans) =>
+      unless ans
+        throw new TradfriError "Failed to connect (response was empty)", TradfriErrorCodes.ConnectionFailed
+      @client.on 'error', (err) =>
+        if err instanceof TradfriError
+          switch err.code
+            when TradfriErrorCodes.NetworkReset, TradfriErrorCodes.ConnectionTimedOut
+              @debug err.message, "warn"
+            when TradfriErrorCodes.AuthenticationFailed, TradfriErrorCodes.ConnectionFailed
+              @debug err.message, "error"
+              throw err
+        else
+          @debug err.message, "error"
+          throw err
+      .on "device updated", (device) =>
+        newdev = Accessory.update device
+        @debug "device updated: #{device.name} (type=#{device.type} [#{newdev.type}])", "debug"
+      .on "device removed", (id) =>
+        Accessory.delete id
+        @debug "device removed: #{id}", "debug"
+      .on "group updated", (group) =>
+        Group.update group
+        @debug "group updated: #{group.name}", "debug"
+      .on "group removed", (groupID) =>
+        group = Group.delete groupID
+        @debug "group removed: #{group?.name}", "debug"
+      .on "scene updated", (groupID, scene) =>
+        group = Group.byID groupID
+        if group?
+          group.addScene scene
+          @debug "scene updated: #{group.name}: #{scene.name}", "debug"
+        else
+          @debug "scene updated: Missing group #{groupID}", "warn"
+      .on "scene removed", (groupID, sceneID) =>
+        group = Group.byID groupID
+        if group?
+          group.delScene sceneID
+          @debug "scene removed from group.name: #{sceneID}", "debug"
+        else
+          @debug "scene removed: Missing group #{groupID}", "warn"
+      @client.observeDevices()
+    .then =>      # Need the devices in place so not Promise.all()
+      @debug "observeDevices resolved", "debug"
+      @client.observeGroupsAndScenes()
+    .then =>
+      @debug "observeGroupsAndScenes resolved", "debug"
+    .catch (err) =>
+      if err instanceof TradfriError
+        switch err.code
+          when TradfriErrorCodes.NetworkReset, TradfriErrorCodes.ConnectionTimedOut
+            return @debug err.message, "warn"
+          when TradfriErrorCodes.AuthenticationFailed, TradfriErrorCodes.ConnectionFailed
+            @debug err.message, "error"
+      throw err
     .finally =>
       credentials
 
 
   reset: ->
-    Promise.resolve()
-    .then =>
-      @client.reset()
-      @connectState = States.DISCONNECTED
+    @client.reset()
     .then =>
       @connect()
 

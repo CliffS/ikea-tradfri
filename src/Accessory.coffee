@@ -36,11 +36,12 @@ class Accessory extends EventEmitter
       @devices.set item.id, item
       item
 
-  @delete: (device) ->
-    deleted = @devices.get device.instanceId
+  @delete: (instanceId) ->
+    deleted = @devices.get instanceId
     if deleted?
       @devices.delete device.instanceId
       deleted.delete()
+    deleted
 
   @get: (name) ->
     vals = @devices.values()
