@@ -36,6 +36,12 @@ class Bulb extends Accessory
       @brightness = level
       ok
 
+  @property 'level',
+    get: ->
+      @brightness
+    set: (level) ->
+      @setBrightness level
+
   colours =
     white: 'f5faf6'
     warm:  'f1e0b5'
@@ -82,10 +88,14 @@ class Bulb extends Accessory
               @temperature
         else
           return @hexcolour
+    set: (colour) ->
+      @setColour colour
 
   @property 'color',
     get: ->
       @colour
+    set: (colour) ->
+      @setColour colour
 
 
 

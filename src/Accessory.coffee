@@ -64,7 +64,6 @@ class Accessory extends EventEmitter
     super()
     @deleted = false
     @id = device.instanceId
-    #@type = Types[device.type]
     @name = device.name
     @alive = device.alive
 

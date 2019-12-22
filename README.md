@@ -2,12 +2,9 @@
 A library to access the Ikea Trådfri lighting system without needing
 to call a separate binary
 
-Please note that this library should be considered as an early beta
-currently.  Things may change.  They may even start working.
-
 ## Example
 
-Currently the examples are in Coffeescript.  I will add Javascript
+Currently the examples are in Coffeescript.  I may add Javascript
 examples later.  Coffeescript is not necessary to be able to use this
 library, it will work with any language that transpiles to Javascript.
 
@@ -67,6 +64,7 @@ tool, probably the Ikea app for Android or iPhone.
 [issues]: https://github.com/CliffS/ikea-tradfri/issues
 [glpl]: https://www.gnu.org/licenses/lgpl-3.0.en.html
 [Ikea]: http://www.ikea.com/
+[debug]: https://www.npmjs.com/package/debug
 
 ## Installation
 
@@ -86,7 +84,7 @@ other connected apps and these will need to reauthenticate.
 The host can be a domain name such as `device.example.com`
 or a dotted IP address such as `192.168.1.20`.
 
-`tradfri.connect()` returns  Promise.  You should wait for
+`tradfri.connect()` returns a Promise.  You should wait for
 the promise to resolve before continuing.  This can be done
 with a `.then()` or by `await`ing the result.  Either way you
 should `catch` any error.
@@ -129,9 +127,11 @@ catch err
   process.exit 1
 ```
 
-There is a third parameter to `new Tradfri`.  This is a boolean
-`debug`, defaultng to `false`.  If set to `true`, there will be logging
-to `stdout` when devices etc. are updated.
+There is a third parameter to `new Tradfri`.  This is so that you may
+pass in a custom logger.  Unless you pass in a function here, the [debug] 
+module will be used with the key `ikea-tradfri`.  If you pass in a function here,
+it should expect two parameters: a message and a level.  Also the
+function will be passed down to the [node-tradrfi-client] library.
 
 All example code below assumes you have the `tradftri` variable above.
 
@@ -457,6 +457,7 @@ tradfri.reset()
 This can be used to reset the connection.
 
 ### close()
+
 ```coffeescript
 tradfri.close()
 ```
