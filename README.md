@@ -131,11 +131,13 @@ catch err
   process.exit 1
 ```
 
-There is a third parameter to `new Tradfri`.  This is so that you may
+There are two more parameters to `new Tradfri`.  This is so that you may
 pass in a custom logger.  Unless you pass in a function here, the [debug] 
-module will be used with the key `ikea-tradfri`.  If you pass in a function here,
-it should expect two parameters: a message and a level.  Also the
-function will be passed down to the [node-tradrfi-client] library.
+module will be used with the key `ikea-tradfri`.  If you pass in a function
+as the third parameter, it should itself
+expect two parameters: a message and a level.
+If the fourth parameter to `new tradfri` is `true`, the custom logging
+function will also be passed down to the [node-tradrfi-client] library.
 
 All example code below assumes you have the `tradftri` variable above.
 

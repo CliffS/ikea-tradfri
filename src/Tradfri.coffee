@@ -28,13 +28,13 @@ class Tradfri extends Property
 
   # This should be called with either a securityId string
   # or an object containing the keys: identity & psk
-  constructor: (@hub, @securityId, customLogger) ->
+  constructor: (@hub, @securityId, customLogger, passThrough) ->
     super()
     @debug = customLogger ? (msg, level) ->
       Debug msg
     params =
       watchConnection: true
-    params.customLogger = customLogger if customLogger
+    params.customLogger = customLogger if customLogger? and passThrough is true
     @client = new Client @hub, params
 
   connect: ->
