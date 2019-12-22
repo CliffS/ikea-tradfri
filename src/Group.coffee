@@ -86,6 +86,8 @@ class Group extends Property
   @property 'scene',
     get: ->
       @groupScenes.get(@sceneId)?.name
+    set: (name) ->
+      try await @setScene name
 
   @property 'scenes',
     get: ->
