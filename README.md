@@ -87,12 +87,16 @@ or a dotted IP address such as `192.168.1.20`.
 `tradfri.connect()` returns a Promise.  You should wait for
 the promise to resolve before continuing.  This can be done
 with a `.then()` or by `await`ing the result.  Either way you
-should `catch` any error.
+should `catch` any error. On success, the promise will resolve
+to the credentials object.
 
-It is safe to call `tradfri.connect()` multiple times or simultaneously
-on the same instance.
-The first call will perform the actual connect; subsequent calls will
-resolve when the connect is completed.
+It is safe to call `tradfri.connect()` multiple times
+on the same instance.  The first call will perform the
+actual connect; subsequent calls will resolve when the
+connect is completed.
+
+You should not create multiple `tradfri` instances for the same
+controller.
 
 ### First time
 

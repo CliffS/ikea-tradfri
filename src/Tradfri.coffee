@@ -19,7 +19,7 @@ sleep = (secs = 1) =>
   new Promise (resolve) =>
     setTimeout resolve, secs * 1000
 
-Debug = require 'debug'
+Debug = require('debug') 'ikea-tradfri'
 
 class Tradfri extends Property
 
@@ -30,13 +30,15 @@ class Tradfri extends Property
   # or an object containing the keys: identity & psk
   constructor: (@hub, @securityId, customLogger) ->
     super()
-    @debug = customLogger ? Debug 'ikea-tradfri'
+    @debug = customLogger ? (msg, level) ->
+      Debug msg
     params =
       watchConnection: true
     params.customLogger = customLogger if customLogger
     @client = new Client @hub, params
 
   connect: ->
+    @debug "connectState: #{@connectState.toString()}", "debug"
     switch @connectState
       when States.CONNECTED
         Promise.resolve @credentials
@@ -44,6 +46,7 @@ class Tradfri extends Property
         await sleep .25 until @connectState is States.CONNECTED
         Promise.resolve @credentials
       when States.DISCONNECTED
+        @connectState = States.CONNECTING
         (
           if typeof @securityId is 'string'
             @client.authenticate  @securityId
@@ -63,9 +66,9 @@ class Tradfri extends Property
             if err instanceof TradfriError
               switch err.code
                 when TradfriErrorCodes.NetworkReset, TradfriErrorCodes.ConnectionTimedOut
-                  @debug err.message, "warn"
+                  @debug err.message, "warn", "debug"
                 when TradfriErrorCodes.AuthenticationFailed, TradfriErrorCodes.ConnectionFailed
-                  @debug err.message, "error"
+                  @debug err.message, "error", "debug"
                   throw err
             else
               @debug err.message, "error"
@@ -101,7 +104,8 @@ class Tradfri extends Property
           @debug "observeDevices resolved", "debug"
           @client.observeGroupsAndScenes()
         .then =>
-          @debug "observeGroupsAndScenes resolved", "debug"
+          @debug "observeGroupsAndScenes resolved: connect complete", "debug"
+          @connectState = States.CONNECTED
         .catch (err) =>
           if err instanceof TradfriError
             switch err.code
