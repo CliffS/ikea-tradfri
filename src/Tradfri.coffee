@@ -1,5 +1,4 @@
 NodeTradfri = require 'node-tradfri-client'
-require('promise.prototype.finally').shim()
 
 Client              = NodeTradfri.TradfriClient
 Types               = NodeTradfri.AccessoryTypes
@@ -106,6 +105,7 @@ class Tradfri extends Property
         .then =>
           @debug "observeGroupsAndScenes resolved: connect complete", "debug"
           @connectState = States.CONNECTED
+          @credentials
         .catch (err) =>
           if err instanceof TradfriError
             switch err.code
@@ -114,8 +114,6 @@ class Tradfri extends Property
               when TradfriErrorCodes.AuthenticationFailed, TradfriErrorCodes.ConnectionFailed
                 @debug err.message, "error"
           throw err
-        .finally =>
-          @credentials
 
 
   reset: ->
