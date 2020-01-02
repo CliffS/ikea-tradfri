@@ -32,7 +32,7 @@
     "promise.prototype.finally": "^3.1.2"
   },
   "devDependencies": {
-    "coffeescript": "^2.4.1",
+    "coffeescript": "^2.5.0",
     "wtfnode": "^0.8.1"
   }
 }
