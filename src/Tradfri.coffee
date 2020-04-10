@@ -42,8 +42,9 @@ class Tradfri extends Property
       when States.CONNECTED
         Promise.resolve @credentials
       when States.CONNECTING
-        await sleep .25 until @connectState is States.CONNECTED
-        Promise.resolve @credentials
+        new Promise (resolve,reject) =>
+          await sleep .25 until @connectState is States.CONNECTED
+          resolve @credentials
       when States.DISCONNECTED
         @connectState = States.CONNECTING
         (
@@ -65,9 +66,9 @@ class Tradfri extends Property
             if err instanceof TradfriError
               switch err.code
                 when TradfriErrorCodes.NetworkReset, TradfriErrorCodes.ConnectionTimedOut
-                  @debug err.message, "warn", "debug"
+                  @debug err.message, "warn"
                 when TradfriErrorCodes.AuthenticationFailed, TradfriErrorCodes.ConnectionFailed
-                  @debug err.message, "error", "debug"
+                  @debug err.message, "error"
                   throw err
             else
               @debug err.message, "error"

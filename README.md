@@ -137,7 +137,7 @@ module will be used with the key `ikea-tradfri`.  If you pass in a function
 as the third parameter, it should itself
 expect two parameters: a message and a level.
 If the fourth parameter to `new tradfri` is `true`, the custom logging
-function will also be passed down to the [node-tradrfi-client] library.
+function will also be passed down to the [node-tradfri-client] library.
 
 All example code below assumes you have the `tradftri` variable above.
 
