@@ -200,6 +200,13 @@ back to the controller.
   This indicates whether or not the Ikea controller believes this device to be
 powered on.
 
+### Device Functions
+
+- **toString()**
+
+  This will return the device name so that the device can be used as a
+  string.
+
 ### Bulb
 
 These are the bulb-specific properties (read-only):

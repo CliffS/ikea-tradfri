@@ -89,6 +89,9 @@ class Accessory extends EventEmitter
     @deleted = true
     @emit 'deleted', @name
 
+  toString: ->
+    @name
+
 
 module.exports = Accessory
 
