@@ -11,4 +11,5 @@ class Scene extends Property
     @index       =  scene.sceneIndex
     @lights      =  (light.instanceId for light in scene.lightSettings ? [])
 
+
 module.exports = Scene

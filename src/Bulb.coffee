@@ -46,7 +46,7 @@ class Bulb extends Accessory
     white: 'f5faf6'
     warm:  'f1e0b5'
     glow:  'efd275'
-      
+
   setColour: (colour) ->
     switch @spectrum
       when 'white'    # cold/warm bulbs

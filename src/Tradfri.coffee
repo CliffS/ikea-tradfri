@@ -42,7 +42,7 @@ class Tradfri extends Property
       when States.CONNECTED
         Promise.resolve @credentials
       when States.CONNECTING
-        new Promise (resolve,reject) =>
+        new Promise (resolve, reject) =>
           await sleep .25 until @connectState is States.CONNECTED
           resolve @credentials
       when States.DISCONNECTED

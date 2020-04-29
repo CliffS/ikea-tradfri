@@ -9,3 +9,6 @@ scripts/
 
 # secrets
 identity.json
+
+#lint
+coffeelint.json
