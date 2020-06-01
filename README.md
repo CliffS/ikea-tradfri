@@ -139,7 +139,7 @@ expect two parameters: a message and a level.
 If the fourth parameter to `new tradfri` is `true`, the custom logging
 function will also be passed down to the [node-tradfri-client] library.
 
-All example code below assumes you have the `tradftri` variable above.
+All example code below assumes you have the `tradfri` variable above.
 
 ## Devices
 
