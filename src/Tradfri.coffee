@@ -96,7 +96,7 @@ class Tradfri extends Property
             group = Group.byID groupID
             if group?
               group.delScene sceneID
-              @debug "scene removed from group.name: #{scene.name}", "debug"
+              @debug "scene removed from group.name: #{group.name}", "debug"
             else
               @debug "scene removed: Missing group #{groupID}", "warn"
           @client.observeDevices()
