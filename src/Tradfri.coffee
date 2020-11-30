@@ -72,7 +72,7 @@ class Tradfri extends Property
                   throw err
             else
               @debug err.message, "error"
-              throw err
+              throw err unless err.message.match /unexpected response \([\d.]+\) to observeScene/
           .on "device updated", (device) =>
             newdev = Accessory.update device
             @debug "device updated: #{device.name} (type=#{device.type} [#{newdev.type}])", "debug"
@@ -96,7 +96,7 @@ class Tradfri extends Property
             group = Group.byID groupID
             if group?
               group.delScene sceneID
-              @debug "scene removed from group.name: #{sceneID}", "debug"
+              @debug "scene removed from group.name: #{scene.name}", "debug"
             else
               @debug "scene removed: Missing group #{groupID}", "warn"
           @client.observeDevices()
