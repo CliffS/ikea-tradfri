@@ -29,7 +29,7 @@
   "homepage": "https://github.com/CliffS/ikea-tradfri#readme",
   "dependencies": {
     "debug": "^4.3.1",
-    "node-tradfri-client": "^2.1.6",
+    "node-tradfri-client": "^2.1.8",
     "promise.prototype.finally": "^3.1.2"
   },
   "devDependencies": {
