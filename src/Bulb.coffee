@@ -1,4 +1,5 @@
 Accessory = require './Accessory'
+Colours   = require 'colornames'
 
 class Bulb extends Accessory
 
@@ -65,7 +66,13 @@ class Bulb extends Accessory
           @temperature = temp
           ok
       when 'rgb'
-        throw new Error 'Not written yet'
+        if typeof colour is 'string'
+          colour = Colours(colour).substr 1
+        else
+          colour = ('000000' + colour.toString 16).substr -6
+        @operate color: colour
+        .then (ok) =>
+          ok
       when 'none' # do nothing
       else
         throw new Error "Unknown bulb spectrum: #{@spectrum}"

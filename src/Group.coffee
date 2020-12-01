@@ -9,11 +9,14 @@ class Group extends Property
   @update: (group) ->
     newgroup = new Group group
     if Group.groups.has newgroup.id
+      # it's an update
       grp = Group.groups.get newgroup.id
       grp.change newgroup # , group
       grp
     else
+      # it's a create
       Group.groups.set newgroup.id, newgroup
+      Group.superGroup = newgroup if newgroup.name is 'SuperGroup'
       newgroup
 
   @delete: (instanceId) ->
@@ -32,11 +35,11 @@ class Group extends Property
     @groups.clear()
 
   @listGroups: ->
-    group for group from Group.groups.values()
+    group for group from Group.groups.values() when not group.isSuper
 
   constructor: (group) ->
     super()
-    @deleted = false
+    @deleted  = false
     @id       =  group.instanceId
     @name     =  group.name
     @isOn     =  group.onOff
@@ -57,13 +60,16 @@ class Group extends Property
     @[k] = v for own k, v of newgroup when v?
 
   addScene: (scene) ->
+    throw new Error "Scenes are now only global" unless @isSuper
     scene = new Scene scene unless scene instanceof Scene
     @groupScenes.set scene.id, scene
 
   getScene: (name) ->
+    throw new Error "Scenes are now only global" unless @isSuper
     return scene for scene from @groupScenes.values() when scene.name is name
 
   delScene: (sceneID) ->
+    throw new Error "Scenes are now only global" unless @isSuper
     @groupScenes.delete sceneID
 
   operate: (operation) ->
@@ -75,22 +81,30 @@ class Group extends Property
       @isOn = onOff
 
   setScene: (name) ->
+    throw new Error "Scenes are now only global" unless @isSuper
     id = @getScene(name)?.id
     if id
       @rawGroup.activateScene id
       .then (ok) =>
         @sceneId = id
     else
-      Promise.reject new Error "Can't find scene #{name} in #{@name}"
+      Promise.reject new Error "Can't find scene #{name}"
+
+  @property 'isSuper',
+    get: ->
+      @name is 'SuperGroup'
 
   @property 'scene',
     get: ->
+      throw new Error "Scenes are now only global" unless @isSuper
       @groupScenes.get(@sceneId)?.name
     set: (name) ->
+      throw new Error "Scenes are now only global" unless @isSuper
       try await @setScene name
 
   @property 'scenes',
     get: ->
+      throw new Error "Scenes are now only global" unless @isSuper
       Array.from(@groupScenes.values()).map (value) => value.name
 
   setLevel: (level) ->

@@ -80,8 +80,8 @@ class Tradfri extends Property
             Accessory.delete id
             @debug "device removed: #{id}", "debug"
           .on "group updated", (group) =>
+            @debug "group updated: #{group.name} (#{group.instanceId})", "debug"
             Group.update group
-            @debug "group updated: #{group.name}", "debug"
           .on "group removed", (groupID) =>
             group = Group.delete groupID
             @debug "group removed: #{group?.name}", "debug"
@@ -135,6 +135,17 @@ class Tradfri extends Property
   @property 'groups',
     get: ->
       Group.listGroups()
+
+  @property 'scenes',
+    get: ->
+      Group.superGroup?.scenes
+
+  @property 'scene',
+    get: ->
+      Group.superGroup?.scene
+
+  setScene: (scene) ->
+    Group.superGroup?.setScene scene
 
   device: (name) ->
     Accessory.get name
