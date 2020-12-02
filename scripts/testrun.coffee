@@ -5,6 +5,7 @@
 
 require('promise.prototype.finally').shim()
 Typeof = require 'typeof'
+{Sleep} = require '../src/Utils'
 
 Tradfri = require '../src/Tradfri'
 Identity = require '../identity'
@@ -24,19 +25,26 @@ tradfri.connect()
   console.log '------------------------------------'
   # await tradfri.reset()
   # console.log "reset called"
+  console.log tradfri.groups
   bulb = tradfri.device 'TRADFRI bulb 22'
+  await bulb.switch on
+  console.log 'hotpink'
+  await bulb.setColour 'hotpink'
+  await sleep 5
   console.log 'red'
   await bulb.setColour 'red'
   console.log 'bright'
   await bulb.setBrightness 100
   await sleep 5
   await bulb.setBrightness 30
-  await sleep 5
+  # await sleep 5
   console.log 'blue'
   await bulb.setColour 0x0000ff
   await sleep 5
   console.log 'green'
   await bulb.setColour 'green'
+  await sleep 5
+  await bulb.switch off
   ###
   console.log (g.name for g from tradfri.groups)
   console.log tradfri.scenes
