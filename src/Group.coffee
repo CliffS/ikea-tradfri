@@ -1,6 +1,9 @@
 Property = require './Property'
 Scene = require './Scene'
 Accessory = require './Accessory'
+{Sleep} = require './Utils'
+
+TRANSITION = 3
 
 class Group extends Property
 
@@ -73,12 +76,27 @@ class Group extends Property
     @groupScenes.delete sceneID
 
   operate: (operation) ->
+    operation.transitionTime = TRANSITION
+    operation.force = true
     @rawGroup.client.operateGroup @rawGroup, operation
 
   switch: (onOff) ->
     @rawGroup.toggle onOff
     .then (ok) =>
       @isOn = onOff
+
+  setBrightness: (level) ->
+    @operate
+      dimmer: level
+      onOff: true
+    .then (ok) =>
+      @dimmer = level
+      ok
+
+  setColour: (colour, spectrum = 'white') ->
+    bulbs = (Accessory.byID id for id in @rawGroup.deviceIDs).filter (item) =>
+      item.type is 'Bulb' and item.spectrum is spectrum
+    await bulb.setColour colour for bulb in bulbs
 
   setScene: (name) ->
     throw new Error "Scenes are now only global" unless @isSuper

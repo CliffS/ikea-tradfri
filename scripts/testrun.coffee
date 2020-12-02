@@ -25,7 +25,24 @@ tradfri.connect()
   console.log '------------------------------------'
   # await tradfri.reset()
   # console.log "reset called"
-  console.log tradfri.groups
+  console.log tradfri.devices
+  console.log (group.name for group in tradfri.groups)
+  hall = tradfri.group 'Living Room'
+  console.log "glow"
+  hall.setColour 'glow'
+  console.log "50%"
+  await hall.setBrightness 50
+  await sleep 20
+  console.log "100%"
+  await hall.setBrightness 100
+  await sleep 20
+  console.log "warm"
+  hall.setColour 'warm'
+  await sleep 20
+  console.log "white"
+  hall.setColour 'white'
+  await sleep 20
+  ###
   bulb = tradfri.device 'TRADFRI bulb 22'
   await bulb.switch on
   console.log 'hotpink'
@@ -45,7 +62,6 @@ tradfri.connect()
   await bulb.setColour 'green'
   await sleep 5
   await bulb.switch off
-  ###
   console.log (g.name for g from tradfri.groups)
   console.log tradfri.scenes
   console.log 'setting "test off"'

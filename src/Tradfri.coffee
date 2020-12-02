@@ -140,9 +140,8 @@ class Tradfri extends Property
   @property 'scene',
     get: ->
       Group.superGroup?.scene
-
-  setScene: (scene) ->
-    Group.superGroup?.setScene scene
+    set: (scene) ->
+      Group.superGroup?.setScene scene
 
   device: (name) ->
     Accessory.get name

@@ -51,7 +51,7 @@ class Accessory extends EventEmitter
       return item for item from vals when item.name is name
 
   @byID: (id) ->
-    @devices.get id
+    @devices.get parseInt id
 
   @close: ->
     @devices.clear()
