@@ -48,10 +48,6 @@ class Group extends Property
     @isOn     =  group.onOff
     @dimmer   =  group.dimmer
     @sceneId  =  group.sceneId
-    firstdevice = Accessory.byID group.deviceIDs[0]
-    firstdevice?.on 'changed', (now) =>
-      @isOn = now.isOn if now.isOn?
-
 
     Object.defineProperty @, 'rawGroup',
       value: group
