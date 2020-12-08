@@ -31,7 +31,7 @@ class Bulb extends Accessory
   switch: (onOff) ->
     @operate onOff: onOff
     .then (ok) =>
-      @ison = onOff
+      @isOn = onOff
       ok
 
   setBrightness: (level) ->

@@ -98,11 +98,13 @@ class Group extends Property
     throw new Error "Scenes are now only global" unless @isSuper
     id = @getScene(name)?.id
     if id
-      @rawGroup.activateScene id
+      @operate
+        sceneId: id
+        onOff:   on
       .then (ok) =>
         @sceneId = id
     else
-      Promise.reject new Error "Can't find scene #{name}"
+      throw new Error "Can't find scene #{name}"
 
   @property 'isSuper',
     get: ->
