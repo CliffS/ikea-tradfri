@@ -1,6 +1,6 @@
 Accessory = require './Accessory'
 Colours   = require 'colornames'
-{Sleep} = require './Utils'
+{ Sleep } = require './Utils'
 
 class Bulb extends Accessory
 
@@ -72,7 +72,6 @@ class Bulb extends Accessory
             ok
         when 'rgb'
           if typeof colour is 'string'
-            console.log "Colour #{colour} is #{Colours(colour)}"
             hexColour = Colours(colour)?.substr 1
             throw new Error "Unknown colour: #{colour}" unless hexColour?
           else

@@ -8,7 +8,7 @@ TradfriErrorCodes   = NodeTradfri.TradfriErrorCodes
 Accessory = require './Accessory'
 Group     = require './Group'
 Property  = require './Property'
-{Sleep}   = require './Utils'
+{ Sleep } = require './Utils'
 
 States = Object.freeze
   DISCONNECTED: Symbol 'disconnected'

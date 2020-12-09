@@ -1,7 +1,7 @@
 Property = require './Property'
 Scene = require './Scene'
 Accessory = require './Accessory'
-{Sleep} = require './Utils'
+{ Sleep } = require './Utils'
 
 TRANSITION = 3
 
@@ -73,8 +73,7 @@ class Group extends Property
 
   operate: (operation) ->
     operation.transitionTime = TRANSITION
-    operation.force = true
-    @rawGroup.client.operateGroup @rawGroup, operation
+    @rawGroup.client.operateGroup @rawGroup, operation, true
 
   switch: (onOff) ->
     @rawGroup.toggle onOff
