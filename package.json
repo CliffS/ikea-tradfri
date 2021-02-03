@@ -5,8 +5,8 @@
   "main": "lib/Tradfri.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "coffee -c -o lib src",
-    "watch": "coffee -c -o lib -w src &",
+    "build": "coffee --compile --output lib src",
+    "watch": "coffee --compile --output lib --watch src &",
     "prepublishOnly": "npm run lint && npm run build",
     "start": "scripts/testrun.coffee",
     "lint": "coffeelint src"
