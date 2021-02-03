@@ -469,16 +469,27 @@ set via the `tradfri` object.
   to, it will attempt to set the scene to the value passed.  It will
   fail silently so it is probably better to use `setScene()`, see below.
 
+```coffeescript
+currentScene = tradfri.scene
+tradfri.scene = 'Evening Lights'
+```
+
 ### Scene Method
 
 - **setScene()** *(string)*
 
   This will attempt to find the scene name passed and set that scene.
   It returns a promise resolving to the scene ID on success and rejects
-  if it canot find the scene by name.
+  if it cannot find the scene by name.
 
   Currently this tries to use a transition time of 3 seconds but this
   appears not to work in the current version of the controller.
+
+```coffeescript
+tradfri.setScene 'Evening Lights'
+.then (id) ->
+  console.log "Scene ID is now #{id} and named #{tradfri.scene}"
+```
 
 ## Other Methods and Properties
 ### reset()
