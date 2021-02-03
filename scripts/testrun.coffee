@@ -4,6 +4,8 @@
 # WTF = require 'wtfnode'
 
 require('promise.prototype.finally').shim()
+Typeof = require 'typeof'
+{Sleep} = require '../src/Utils'
 
 Tradfri = require '../src/Tradfri'
 Identity = require '../identity'
@@ -15,6 +17,7 @@ sleep = (time = 10) ->
 # Identity = "hOPupErDoLDw7gDe"
 tradfri = new Tradfri 'tradfri.tallinn.may.be', Identity #, true
 
+console.log 'connecting'
 tradfri.connect()
 .then (credentials) ->
   credentials.id = Identity.id ? Identity
@@ -22,6 +25,52 @@ tradfri.connect()
   console.log '------------------------------------'
   # await tradfri.reset()
   # console.log "reset called"
+  console.log tradfri.devices
+  console.log (group.name for group in tradfri.groups)
+  hall = tradfri.group 'Living Room'
+  console.log "glow"
+  hall.setColour 'glow'
+  console.log "50%"
+  await hall.setBrightness 50
+  await sleep 20
+  console.log "100%"
+  await hall.setBrightness 100
+  await sleep 20
+  console.log "warm"
+  hall.setColour 'warm'
+  await sleep 20
+  console.log "white"
+  hall.setColour 'white'
+  await sleep 20
+  ###
+  bulb = tradfri.device 'TRADFRI bulb 22'
+  await bulb.switch on
+  console.log 'hotpink'
+  await bulb.setColour 'hotpink'
+  await sleep 5
+  console.log 'red'
+  await bulb.setColour 'red'
+  console.log 'bright'
+  await bulb.setBrightness 100
+  await sleep 5
+  await bulb.setBrightness 30
+  # await sleep 5
+  console.log 'blue'
+  await bulb.setColour 0x0000ff
+  await sleep 5
+  console.log 'green'
+  await bulb.setColour 'green'
+  await sleep 5
+  await bulb.switch off
+  console.log (g.name for g from tradfri.groups)
+  console.log tradfri.scenes
+  console.log 'setting "test off"'
+  await tradfri.setScene 'test off'
+  await sleep 20
+  console.log 'setting "testing"'
+  await tradfri.setScene 'testing'
+  await sleep 20
+
   plug = tradfri.device 'Socket 1'
   plug.on 'changed', (state) =>
     console.log "Plug is now #{if state.isOn then 'on' else 'off'}"
@@ -40,7 +89,6 @@ tradfri.connect()
   await sleep 10
   console.log "Position: #{blind.position}"
   await sleep 30
-  ###
   console.log ( group.scenes for group in groups )
   console.log ( group.scene for group in groups )
   await group.setScene 'FOCUS' for group in groups

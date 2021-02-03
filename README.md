@@ -16,11 +16,13 @@ tradfri = new Tradfri 'device.example.com', Identity
 tradfri.connect()
 .then (credentials) ->
   # store the credentials if necessary
-  group4 = tradfri.group 'TRADFRI group 4'  # find the group
-  group4.scene = 'RELAX'                    # Set the scene (mood)
+  group4 = tradfri.group 'TRADFRI group 4'  # find a group
+  group4.switch on                          # switch it on
+  group4.setBrightness 50                   # set it to 50%
   bulb = tradfri.device 'Standard Lamp'     # Find a bulb
   bulb.colour = 'white'                     # Set the cool colour
   bulb.level  = 50                          # Set half brightness
+  tradfri.scene = 'My Global Scene'         # Set up a global scene
 .catch (err) ->
   console.error "Failed to connect: #{err}"
 ```
@@ -29,6 +31,7 @@ tradfri.connect()
 
 - [Rationale](#rationale)
 - [Installation](#installation)
+- [Changes in Version 5](#changes-in-version-5)
 - [Connecting to the Trådfri Controller](#connecting-to-the-tr%C3%A5dfri-controller)
   - [First time](#first-time)
   - [Subsequent connect calls](#subsequent-connect-calls)
@@ -43,6 +46,7 @@ tradfri.connect()
 - [Groups](#groups)
   - [Getting a Group](#getting-a-group)
   - [Group Properties](#group-properties)
+- [Scenes](#scenes)
 - [Other Methods and Properties](#other-methods-and-properties)
 - [Issues](#issues)
 - [Licence](#licence)
@@ -69,6 +73,17 @@ tool, probably the Ikea app for Android or iPhone.
 ## Installation
 
     npm install ikea-tradfri
+
+## Changes in Version 5
+
+With no warning, Ikea implemented major changes to groups and
+scenes.  Previously, each group had a set of scenes that could be
+applied.  This was changed so that all scenes became global and could
+work across groups.
+
+The effect of this is that setting scenes on groups no longer works.
+Scenes need to be set on the `tradfri` object.  Scenes can be created
+with the mobile app and can be called from this library.
 
 ## Connecting to the Trådfri Controller
 
@@ -139,7 +154,8 @@ expect two parameters: a message and a level.
 If the fourth parameter to `new tradfri` is `true`, the custom logging
 function will also be passed down to the [node-tradfri-client] library.
 
-All example code below assumes you have the `tradfri` variable above.
+All example code below assumes you have the `tradfri` variable described
+above.
 
 ## Devices
 
@@ -193,7 +209,7 @@ back to the controller.
 
 - **type** *(string)*
 
-  This will be one of Bulb, Remote or Sensor.
+  This will be one of Blind, Bulb, Plug, Remote, Repeater or Sensor.
 
 - **alive** *(boolean)*
 
@@ -231,11 +247,14 @@ These are the bulb-specific properties (read-only):
 
   The light spectrum of the bulb: white, rgb or none
 
-- **colour** *(string | percentage)*
+- **colour** *(string | percentage | value)*
 
-  Reading the property will return "white", "warm" or "glow" if its
+  Reading the property for white bulbs
+  will return "white", "warm" or "glow" if its
   value matches one of those settings (1, 62 or 97, respectively) 
   or it will return the current numerical value.
+
+  For RGB bulbs, it will return the RGB colour.
 
 - **color** *(string | percentage)*
 
@@ -248,7 +267,7 @@ These are the bulb-specific properties (read-only):
 - **hue**
 - **saturation**
 
-  The hue and saturation of the RGB bulbs (not yet implemented).
+  The hue and saturation of the RGB bulbs.
 
 The following are the methods to change settings on a bulb:
 
@@ -277,8 +296,6 @@ The following are the methods to change settings on a bulb:
   colour temperature and 100 is the warmest.
   This will return a promise resolving to `true` if the setting was changed or
   `false` if it was not.
-
-  The code is not yet written for RGB bulbs.
 
 - **setColor**
 
@@ -370,7 +387,8 @@ device.on "deleted", (name) ->
   or more attribute keys: 
 
   The first object is the new state of the device, the second object
-  is the previous state.
+  is the previous state.  Only states that have changed will be in
+  the object.
 
 ```coffeescript
 bulb.on changed, (current, previous) ->
@@ -408,26 +426,11 @@ The read-only properties for a group are:
 - **isOn** *(boolean)*
 
   This returns whether the controller believes this group
-  to be on or off.
-
-- **scene** *(string)*
-
-  This is the name of the current scene, if any.
-
-- **scenes** *(Array of strings)*
-
-  This will return an array of Scene class objects which are
-  available to this group.
+  to be on or off.  It is unreliable.
 
 - **level** *(integer percentage)*
 
   Reading this will return the last group value applied.
-
-```coffeescript
-group = tradfri.group 'Hallway'
-console.log "#{group.name} has the following scenes:"
-console.log (scene for scene in group.scenes)
-```
 
 The methods are as follows.  Each of these methods returns
 a promise that resolves to a boolean.  If true, the change was
@@ -435,7 +438,7 @@ made, if false nothing was changed.
 
 - **switch()** *(boolean)*
 
-  Setting this to on (true) will turn on all the bulbs in the
+  Calling this with on (true) will turn on all the bulbs in the
   group.  Setting it to off (false) will turn them off.
 
 - **setLevel()** *(integer percentage)*
@@ -449,15 +452,43 @@ group.level 50
 console.log "#{group.name} is now at level #{group.level}"
 ```
 
-- **setScene()** *(string)*
+## Scenes
 
-  This will set the scene for the group, so long
-  as the name matches one of the scenes from the group.
+The global scenes can now only be read and
+set via the `tradfri` object.
+
+### Scene Properties
+
+- **scenes** *(array)*
+
+  This will return an array of scene names known by the controller.
+
+- **scene**  *(string: read-write)*
+
+  This will return the last scene set via this library.  If written
+  to, it will attempt to set the scene to the value passed.  It will
+  fail silently so it is probably better to use `setScene()`, see below.
 
 ```coffeescript
-group = tradfri.group 'Hallway'
-console.log "#{group.name} is currently set to #{group.scene}"
-group.setScene 'Romantic'
+currentScene = tradfri.scene
+tradfri.scene = 'Evening Lights'
+```
+
+### Scene Method
+
+- **setScene()** *(string)*
+
+  This will attempt to find the scene name passed and set that scene.
+  It returns a promise resolving to the scene ID on success and rejects
+  if it cannot find the scene by name.
+
+  Currently this tries to use a transition time of 3 seconds but this
+  appears not to work in the current version of the controller.
+
+```coffeescript
+tradfri.setScene 'Evening Lights'
+.then (id) ->
+  console.log "Scene ID is now #{id} and named #{tradfri.scene}"
 ```
 
 ## Other Methods and Properties

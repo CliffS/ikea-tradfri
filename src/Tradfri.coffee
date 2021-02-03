@@ -8,15 +8,12 @@ TradfriErrorCodes   = NodeTradfri.TradfriErrorCodes
 Accessory = require './Accessory'
 Group     = require './Group'
 Property  = require './Property'
+{ Sleep } = require './Utils'
 
 States = Object.freeze
   DISCONNECTED: Symbol 'disconnected'
   CONNECTING:   Symbol 'connecting'
   CONNECTED:    Symbol 'connected'
-
-sleep = (secs = 1) =>
-  new Promise (resolve) =>
-    setTimeout resolve, secs * 1000
 
 Debug = require('debug') 'ikea-tradfri'
 
@@ -43,7 +40,7 @@ class Tradfri extends Property
         Promise.resolve @credentials
       when States.CONNECTING
         new Promise (resolve, reject) =>
-          await sleep .25 until @connectState is States.CONNECTED
+          await Sleep .25 until @connectState is States.CONNECTED
           resolve @credentials
       when States.DISCONNECTED
         @connectState = States.CONNECTING
@@ -80,8 +77,8 @@ class Tradfri extends Property
             Accessory.delete id
             @debug "device removed: #{id}", "debug"
           .on "group updated", (group) =>
+            @debug "group updated: #{group.name} (#{group.instanceId})", "debug"
             Group.update group
-            @debug "group updated: #{group.name}", "debug"
           .on "group removed", (groupID) =>
             group = Group.delete groupID
             @debug "group removed: #{group?.name}", "debug"
@@ -135,6 +132,16 @@ class Tradfri extends Property
   @property 'groups',
     get: ->
       Group.listGroups()
+
+  @property 'scenes',
+    get: ->
+      Group.superGroup?.scenes
+
+  @property 'scene',
+    get: ->
+      Group.superGroup?.scene
+    set: (scene) ->
+      Group.superGroup?.setScene scene
 
   device: (name) ->
     Accessory.get name

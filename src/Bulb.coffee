@@ -1,4 +1,6 @@
 Accessory = require './Accessory'
+Colours   = require 'colornames'
+{ Sleep } = require './Utils'
 
 class Bulb extends Accessory
 
@@ -19,15 +21,17 @@ class Bulb extends Accessory
     @hexcolour    =  light.color
     @hue          =  light.hue          if light.hue?
     @saturation   =  light.saturation   if light.saturation?
+    #console.log Colours.all()
+    #process.exit 1
 
   operate: (obj) ->
     tradfri = @device.client
-    await tradfri.operateLight @device, obj
+    tradfri.operateLight @device, obj
 
   switch: (onOff) ->
     @operate onOff: onOff
     .then (ok) =>
-      @ison = onOff
+      @isOn = onOff
       ok
 
   setBrightness: (level) ->
@@ -48,27 +52,38 @@ class Bulb extends Accessory
     glow:  'efd275'
 
   setColour: (colour) ->
-    switch @spectrum
-      when 'white'    # cold/warm bulbs
-        switch colour
-          when 'white'
-            temp = 1
-          when 'warm', 'warm white'
-            temp = 62
-          when 'glow', 'warm glow'
-            temp = 97
+    Promise.resolve()
+    .then =>
+      switch @spectrum
+        when 'white'    # cold/warm bulbs
+          switch colour
+            when 'white'
+              temp = 1
+            when 'warm', 'warm white'
+              temp = 62
+            when 'glow', 'warm glow'
+              temp = 97
+            else
+              temp = parseInt colour
+              throw new Error "Unknown colour of #{colour}" unless 0 <= temp <= 100   # 0 to 100 inclusive
+          @operate colorTemperature: temp
+          .then (ok) =>
+            @temperature = temp
+            ok
+        when 'rgb'
+          if typeof colour is 'string'
+            hexColour = Colours(colour)?.substr 1
+            throw new Error "Unknown colour: #{colour}" unless hexColour?
           else
-            temp = parseInt colour
-            throw new Error "Unknown colour of #{colour}" unless 0 <= temp <= 100   # 0 to 100 inclusive
-        @operate colorTemperature: temp
-        .then (ok) =>
-          @temperature = temp
-          ok
-      when 'rgb'
-        throw new Error 'Not written yet'
-      when 'none' # do nothing
-      else
-        throw new Error "Unknown bulb spectrum: #{@spectrum}"
+            hexColour = ('000000' + colour.toString 16).substr -6
+          @operate color: hexColour
+          .then (ok) =>
+            @hexcolour = hexColour
+            await Sleep .6
+            ok
+        when 'none' # do nothing
+        else
+          throw new Error "Unknown bulb spectrum: #{@spectrum}"
 
   setColor: (colour) ->
     @setColour colour
