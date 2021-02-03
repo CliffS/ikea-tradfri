@@ -103,6 +103,7 @@ class Group extends Property
       .then (ok) =>
         @sceneId = id
     else
+      @sceneId = null
       throw new Error "Can't find scene #{name}"
 
   @property 'isSuper',
