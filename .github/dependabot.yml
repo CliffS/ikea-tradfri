@@ -1,0 +1,14 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: node-tradfri-client
+    versions:
+    - 2.2.0
+  - dependency-name: ini
+    versions:
+    - 1.3.8
