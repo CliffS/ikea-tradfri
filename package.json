@@ -37,6 +37,6 @@
     "coffeelint": "^2.1.0",
     "coffeescript": "^2.5.1",
     "typeof": "^1.0.0",
-    "wtfnode": "^0.8.4"
+    "wtfnode": "^0.9.0"
   }
 }
