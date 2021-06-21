@@ -30,7 +30,7 @@
   "dependencies": {
     "colornames": "^1.1.1",
     "debug": "^4.3.1",
-    "node-tradfri-client": "^2.2.0",
+    "node-tradfri-client": "^3.0.0",
     "promise.prototype.finally": "^3.1.2"
   },
   "devDependencies": {
